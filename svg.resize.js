@@ -20,9 +20,11 @@
                 defaults[i] = options[i];
             }
 
+            var firstBox = element.bbox();
+
             resize = function(event){
 
-                element.startParams = {x:event.detail.x, y:event.detail.y, box:element.bbox()};
+                element.startParams = {x:event.detail.x, y:event.detail.y, box:element.bbox(), rbox:element.rbox(), transform:eval(uneval(element.transform()))};
 
                 switch(event.type){
                     case 'lt':
@@ -72,6 +74,11 @@
                             if(element.startParams.box.width - diffX > 0)
                                 element.move(element.startParams.box.x + diffX, element.startParams.box.y).width(element.startParams.box.width - diffX);
                         };
+                        break;
+                    case 'rot':
+                        calc = function(diffX, diffY){
+                            element.center(element.startParams.rbox.cx, element.startParams.rbox.cy).transform({rotation:element.startParams.transform.rotation + diffX, cx:element.startParams.rbox.cx, cy:element.startParams.rbox.cy});
+                        };
                 }
 
                 SVG.on(window, 'mousemove', update);
@@ -89,6 +96,7 @@
                 SVG.off(window, 'mousemove', update);
             };
 
+
             this.on('lt', resize);
             this.on('rt', resize);
             this.on('rb', resize);
@@ -98,6 +106,8 @@
             this.on('r', resize);
             this.on('b', resize);
             this.on('l', resize);
+
+            this.on('rot', resize);
 
         }
 
