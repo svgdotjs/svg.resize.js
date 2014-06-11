@@ -11,3 +11,8 @@ To use this extension you need [svn.select](https://github.com/Fuzzyma/svg.selec
     rect.select().resize();
 
 Resizing works with all shapes except paths.
+
+# Options
+
+- snapToGrid: Snaps the shape to a virtual grid while resizing (default `1`)
+- rotPrecision: Higher Precision increases the mousemovement you need to rotate the same way (default `2`)

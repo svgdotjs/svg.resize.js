@@ -37,53 +37,58 @@
                 switch(event.type){
                     case 'lt':
                         calc = function(diffX, diffY){
-                            //if(snapToGrid(element.startParams.box.width - diffX) > 0 && snapToGrid(element.startParams.box.height - diffY) > 0){
-                                //var snapped = snapToGrid(element.startParams.box.x + diffX, element.startParams.box.y + diffY, diffX, diffY);
-                                //element.move(snapped[0], snapped[1]).size(element.startParams.box.width - snapped[2], element.startParams.box.height - snapped[3]);
-                            if(element.startParams.box.width - diffX > 0 && element.startParams.box.height - diffY > 0)
-                                element.move(element.startParams.box.x + diffX, element.startParams.box.y + diffY).size(element.startParams.box.width - diffX, element.startParams.box.height - diffY);
+                            var snap = snapToGrid(diffX, diffY);
+                            if(element.startParams.box.width - snap[0] > 0 && element.startParams.box.height - snap[1] > 0)
+                                element.move(element.startParams.box.x + snap[0], element.startParams.box.y + snap[1]).size(element.startParams.box.width - snap[0], element.startParams.box.height - snap[1]);
                         };
                         break;
                     case 'rt':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.width + diffX > 0 && element.startParams.box.height - diffY > 0)
-                                element.move(element.startParams.box.x, element.startParams.box.y + diffY).size(element.startParams.box.width + diffX, element.startParams.box.height - diffY);
+                            var snap = snapToGrid(diffX, diffY, 1<<1);
+                            if(element.startParams.box.width + snap[0] > 0 && element.startParams.box.height - snap[1] > 0)
+                                element.move(element.startParams.box.x, element.startParams.box.y + snap[1]).size(element.startParams.box.width + snap[0], element.startParams.box.height - snap[1]);
                         };
                         break;
                     case 'rb':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.width + diffX > 0 && element.startParams.box.height + diffY > 0)
-                                element.move(element.startParams.box.x, element.startParams.box.y).size(element.startParams.box.width + diffX, element.startParams.box.height + diffY);
+                            var snap = snapToGrid(diffX, diffY, 0);
+                            if(element.startParams.box.width + snap[0] > 0 && element.startParams.box.height + snap[1] > 0)
+                                element.move(element.startParams.box.x, element.startParams.box.y).size(element.startParams.box.width + snap[0], element.startParams.box.height + snap[1]);
                         };
                         break;
                     case 'lb':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.width - diffX > 0 && element.startParams.box.height + diffY > 0)
-                                element.move(element.startParams.box.x + diffX, element.startParams.box.y).size(element.startParams.box.width - diffX, element.startParams.box.height + diffY);
+                            var snap = snapToGrid(diffX, diffY, 1);
+                            if(element.startParams.box.width - snap[0] > 0 && element.startParams.box.height + snap[1] > 0)
+                                element.move(element.startParams.box.x + snap[0], element.startParams.box.y).size(element.startParams.box.width - snap[0], element.startParams.box.height + snap[1]);
                         };
                         break;
                     case 't':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.height - diffY > 0)
-                                element.move(element.startParams.box.x, element.startParams.box.y + diffY).height(element.startParams.box.height - diffY);
+                            var snap = snapToGrid(diffX, diffY, 1<<1);
+                            if(element.startParams.box.height - snap[1] > 0)
+                                element.move(element.startParams.box.x, element.startParams.box.y + snap[1]).height(element.startParams.box.height - snap[1]);
                         };
                         break;
                     case 'r':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.width + diffX > 0)
-                            element.move(element.startParams.box.x, element.startParams.box.y).width(element.startParams.box.width + diffX);
+                            var snap = snapToGrid(diffX, diffY, 0);
+                            if(element.startParams.box.width + snap[0] > 0)
+                            element.move(element.startParams.box.x, element.startParams.box.y).width(element.startParams.box.width + snap[0]);
                         };
                         break;
                     case 'b':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.height + diffY > 0)
-                                element.move(element.startParams.box.x, element.startParams.box.y).height(element.startParams.box.height + diffY);
+                            var snap = snapToGrid(diffX, diffY, 0);
+                            if(element.startParams.box.height + snap[1] > 0)
+                                element.move(element.startParams.box.x, element.startParams.box.y).height(element.startParams.box.height + snap[1]);
                         };
                         break;
                     case 'l':
                         calc = function(diffX, diffY){
-                            if(element.startParams.box.width - diffX > 0)
-                                element.move(element.startParams.box.x + diffX, element.startParams.box.y).width(element.startParams.box.width - diffX);
+                            var snap = snapToGrid(diffX, diffY, 1);
+                            if(element.startParams.box.width - snap[0] > 0)
+                                element.move(element.startParams.box.x + snap[0], element.startParams.box.y).width(element.startParams.box.width - snap[0]);
                         };
                         break;
                     case 'rot':
@@ -93,14 +98,16 @@
                         break;
                     case 'point':
                         calc = function(diffX, diffY){
+                            var snap = snapToGrid(diffX, diffY,element.startParams.pointCoords[0], element.startParams.pointCoords[1]);
+
                             var array = element.type == 'line' ? [
                                 {
-                                    x1:element.startParams.pointCoords[0]+diffX,
-                                    y1:element.startParams.pointCoords[1]+diffY
+                                    x1:element.startParams.pointCoords[0]+snap[0],
+                                    y1:element.startParams.pointCoords[1]+snap[1]
                                 },
                                 {
-                                    x2:element.startParams.pointCoords[0]+diffX,
-                                    y2:element.startParams.pointCoords[1]+diffY
+                                    x2:element.startParams.pointCoords[0]+snap[0],
+                                    y2:element.startParams.pointCoords[1]+snap[1]
                                 }
                             ] : element.array.value;
                             if(element.type == 'line'){
@@ -108,8 +115,8 @@
                                 return;
                             }
 
-                            array[element.startParams.i][0] = element.startParams.pointCoords[0] + diffX;
-                            array[element.startParams.i][1] = element.startParams.pointCoords[1] + diffY;
+                            array[element.startParams.i][0] = element.startParams.pointCoords[0] + snap[0];
+                            array[element.startParams.i][1] = element.startParams.pointCoords[1] + snap[1];
 
                             element.plot(array);
                         };
@@ -129,38 +136,27 @@
             done = function(event){
                 SVG.off(window, 'mousemove', update);
             };
-            /*
-            snapToGrid = function(draw, draw2, diffX, diffY){
-                if(draw2){
-                    var temp = [draw % defaults.snapToGrid, draw2 % defaults.snapToGrid, diffX % defaults.snapToGrid, diffY % defaults.snapToGrid];
-                    diffX -= (Math.abs(temp[0]) < defaults.snapToGrid/2 ? temp[2] : temp[2]-defaults.snapToGrid) + (temp[2] < 0 ? defaults.snapToGrid : 0);
-                    diffY -= (Math.abs(temp[1]) < defaults.snapToGrid/2 ? temp[3] : temp[3]-defaults.snapToGrid) + (temp[3] < 0 ? defaults.snapToGrid : 0);
 
-                    draw -= Math.abs(temp[0]) < defaults.snapToGrid/2 ? temp[0] : temp[0]-defaults.snapToGrid;
-                    draw2 -= Math.abs(temp[1]) < defaults.snapToGrid/2 ? temp[1] : temp[1]-defaults.snapToGrid;
 
-                    return [draw, draw2, diffX, diffY];
+            // The flag is used to determine whether the resizing is used with a left-Point (first bit) and top-point (second bit)
+            // In this cases the temp-values are calculated differently
+            snapToGrid = function(diffX, diffY, flag, pointCoordsY){
+
+                var temp;
+
+                // If pointCoordsY is given, a single Point has to be snapped (deepselect). Thats why we need a different temp-value
+                if(pointCoordsY){
+                    temp = [(flag+diffX) % defaults.snapToGrid, (pointCoordsY+diffY) % defaults.snapToGrid];
+                }else{
+                    flag = flag == null ? 1 | 1<<1 : flag;
+                    temp = [(element.startParams.box.x+diffX + (flag & 1 ? 0 : element.startParams.box.width)) % defaults.snapToGrid, (element.startParams.box.y+diffY + (flag & (1<<1) ? 0 : element.startParams.box.height)) % defaults.snapToGrid];
                 }
+                //var temp = [(element.startParams.box.x+diffX + (flag & 1 ? 0 : element.startParams.box.width)) % defaults.snapToGrid, (element.startParams.box.y+diffY + (flag & (1<<1) ? 0 : element.startParams.box.height)) % defaults.snapToGrid];
+                diffX -= (Math.abs(temp[0]) < defaults.snapToGrid/2 ? temp[0] : temp[0]-defaults.snapToGrid) + (temp[0] < 0 ? defaults.snapToGrid : 0);
+                diffY -= (Math.abs(temp[1]) < defaults.snapToGrid/2 ? temp[1] : temp[1]-defaults.snapToGrid) + (temp[1] < 0 ? defaults.snapToGrid : 0);
+                return [diffX, diffY];
 
-                if(typeof draw === 'number'){
-                    var temp = draw % defaults.snapToGrid;
-                    return (draw -= temp < defaults.snapToGrid/2 ? temp : temp-defaults.snapToGrid);
-                }
-
-                if(draw.length){
-                    var temp = [draw[0] % defaults.snapToGrid, draw[1] % defaults.snapToGrid];
-                    draw[0] -= temp[0] < defaults.snapToGrid/2 ? temp[0] : temp[0]-defaults.snapToGrid;
-                    draw[1] -= temp[1] < defaults.snapToGrid/2 ? temp[1] : temp[1]-defaults.snapToGrid;
-                    return draw;
-                }
-
-                for(var i in draw){
-                    var temp = draw[i] % defaults.snapToGrid;
-                    draw[i] -= temp < defaults.snapToGrid/2 ? temp : temp-defaults.snapToGrid;
-                }
-
-                return draw;
-            };*/
+            };
 
             this.on('lt', resize);
             this.on('rt', resize);
