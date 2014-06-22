@@ -27,6 +27,8 @@
             // The entry-function for our plugin. Is called whenever resizing starts
             resize = function (event) {
 
+                event = event || window.event;
+
                 // We store our params for the resize on the object
                 element.startParams = {
                     x: event.detail.x,      // x-position of the mouse when resizing started
@@ -39,7 +41,7 @@
                 // the i-param in the event holds the index of the point which is moved, when using `deepSelect`
                 if (event.detail.i !== undefined) {
                     // `deepSelect` is possible with lines, too.
-                    // We have to check that and getting the right point here. 
+                    // We have to check that and getting the right point here.
                     // So first we build a point-array like the one in polygon and polyline
                     var array = element.type == 'line' ? [
                         [element.attr('x1'), element.attr('y1')],
@@ -194,6 +196,9 @@
 
             // The update-function redraws the element every time the mouse is moving
             update = function (event) {
+
+                event = event || window.event;
+
                 // Calculate the difference between the mouseposition at start and now
                 var diffX = event.pageX - element.startParams.x
                     , diffY = event.pageY - element.startParams.y;
