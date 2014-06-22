@@ -251,6 +251,7 @@
 
             this.on('point', resize); // Point-Moving
 
+            return this;
         }
 
     });
