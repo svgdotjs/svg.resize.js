@@ -1,7 +1,5 @@
 // svg.resize.js 0.1.0 - Release for svg.js 1.0.0-rc.9 Copyright (c) 2014 Ulrich-Matthias Schäfer - Licensed under the MIT license
 
-// TODO: Maybe use nested SVG instead of group to avoid translation when moving
-
 ;(function () {
 
     SVG.extend(SVG.Element, {
