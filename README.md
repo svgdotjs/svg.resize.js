@@ -1,16 +1,14 @@
 svg.resize
 ==========
 
-An extension of svn.js which allows to resize elements which are selected.
-To use this extension you need [svn.select](https://github.com/Fuzzyma/svg.select.js)
+An extension of [svg.js](https://github.com/wout/svg.js) which allows to resize elements which are selected.
+To use this extension you need [svn.select.js](https://github.com/Fuzzyma/svg.select.js)
 
 # Usage
 
     var draw = SVG('drawing');
 	var rect = draw.rect(100,100);
     rect.select().resize();
-
-Resizing works with all shapes except paths.
 
 # Options
 
