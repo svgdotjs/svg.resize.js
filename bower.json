@@ -1,0 +1,29 @@
+{
+  "name": "svg.resize.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Fuzzyma/svg.resize.js",
+  "authors": [
+    "Ulrich-Matthias Schäfer"
+  ],
+  "description": "An extension for svn.js which allows to resize elements which are selected",
+  "main": [
+    "./dist/svg.resize.js"
+  ],
+  "keywords": [
+    "svg.js",
+    "resize",
+    "mouse"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "svg.js":"1.1.x",
+    "svg.select.js":"1.0.x"
+  }
+}
