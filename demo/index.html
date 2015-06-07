@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Svg.resize.js : Demo-Page">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="demo.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="svg.select.css">
+    
+    <title>Svg.resize.js | Demo-Page</title>
+
+  </head>
+  
+  <body>
+  <div id="container">
+    <h1>svg.select.js - Demo</h1>
+
+    <div class="box">
+      <h2>Polygon, normal resizing</h2>
+      <code>
+        new SVG('polygon_normal').size('100%', '100%')
+            .polygon('350,50 283,250 450,122 250,122 416,250')
+            .select().select({deepSelect:true})
+            .resize();
+      </code>
+      <div id="polygon_normal"></div>
+    </div>
+    
+    <div class="box">
+      <h2>Polygon, resizing wirg snapToGrid and snapToAngle</h2>
+      <code>
+        new SVG('polygon_snap').size('100%', '100%')
+            .polygon('350,50 283,250 450,122 250,122 416,250')
+            .select().select({deepSelect:true})
+            .resize({snapToGrid:20, snapToAngle:15});
+      </code>
+      <div id="polygon_snap"></div>
+    </div>
+    
+    <div class="box">
+      <h2>Polygon, snaps on ctrl down</h2>
+      <code>
+        var poly = new SVG('polygon_ctrl').size('100%', '100%')
+            .polygon('350,50 283,250 450,122 250,122 416,250')
+            .select().select({deepSelect:true})
+            .resize();
+ 
+        window.addEventListener('keydown', function(e){
+            if(e.keyCode == 17){
+                poly.resize({'snapToGrid': 20, 'snapToAngle':15});
+            }
+        }, false);
+        
+        window.addEventListener('keyup', function(e){
+            if(e.keyCode == 17){
+                poly.resize({'snapToGrid': 1,'snapToAngle':0.1});
+            }
+        }, false);
+      </code>
+      <div id="polygon_ctrl"></div>
+    </div>
+
+  </div>
+    
+    <script src="svg.min.js"></script>
+    <script src="svg.select.min.js"></script>
+    <script src="svg.resize.js"></script>
+    <script>
+        new SVG('polygon_normal').size('100%', '100%').polygon('350,50 283,250 450,122 250,122 416,250').attr('stroke-width',1).attr('fill','none').select().select({deepSelect:true}).resize();
+        new SVG('polygon_snap').size('100%', '100%').polygon('350,50 283,250 450,122 250,122 416,250').attr('stroke-width',1).attr('fill','none').select().select({deepSelect:true}).resize({snapToGrid:20, snapToAngle:15});
+        var poly = new SVG('polygon_ctrl').size('100%', '100%').polygon('350,50 283,250 450,122 250,122 416,250').attr('stroke-width',1).attr('fill','none').select().select({deepSelect:true}).resize();
+        
+        window.addEventListener('keydown', function(e){
+            if(e.keyCode == 17){
+                poly.resize({'snapToGrid': 20, 'snapToAngle':15});
+            }
+        }, false);
+        
+        window.addEventListener('keyup', function(e){
+            if(e.keyCode == 17){
+                poly.resize({'snapToGrid': 1,'snapToAngle':0.1});
+            }
+        }, false);
+
+
+    </script>
+  </body>
+</html>
