@@ -3,6 +3,26 @@
 * Copyright (c) 2015 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
 
+    // Calculates the offset of an element
+    function offset(el) {
+        var x = 0, y = 0;
+
+        if ('doc' in el) {
+            var box = el.bbox();
+            x = box.x;
+            y = box.y;
+            el = el.doc().parent;
+        }
+
+        while (el.nodeName.toUpperCase() !== 'BODY') {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+            el = el.offsetParent;
+        }
+
+        return {x: x, y: y};
+    }
+
     function ResizeHandler(el) {
 
         el.remember('_resizeHandler', this);
@@ -201,20 +221,23 @@
 
                     // yes this is kinda stupid but we need the mouse coords back...
                     var current = {x: diffX + this.parameters.x, y: diffY + this.parameters.y};
+                    
+                    // we need the offset of the element to calculate our angle
+                    var off = offset(this.el);
 
                     // start minus middle
-                    var sAngle = Math.atan2((this.parameters.y - this.parameters.rbox.cy), (this.parameters.x - this.parameters.rbox.cx));
+                    var sAngle = Math.atan2((this.parameters.y - off.y - this.parameters.rbox.height / 2), (this.parameters.x - off.x - this.parameters.rbox.width / 2));
 
                     // end minus middle
-                    var pAngle = Math.atan2((current.y - this.parameters.rbox.cy), (current.x - this.parameters.rbox.cx));
+                    var pAngle = Math.atan2((current.y - off.y - this.parameters.rbox.height / 2), (current.x - off.x - this.parameters.rbox.width / 2));
 
                     var angle = (pAngle - sAngle) * 180 / Math.PI;
 
-                    // We have to move the this.el to the center of the rbox first and change the rotation afterwards
+                    // We have to move the element to the center of the rbox first and change the rotation afterwards
                     // because rotation always works around a rotation-center, which is changed when moving the this.el.
                     // We also set the new rotation center to the center of the rbox.
-                    // The -2 and -1.5 is tuning since the box is jumping for a few px when starting the rotation.
-                    this.el.center(this.parameters.rbox.cx - 2, this.parameters.rbox.cy - 1.5).transform({rotation: this.parameters.rotation + angle - angle % this.options.snapToAngle, cx: this.parameters.rbox.cx, cy: this.parameters.rbox.cy});
+                    // The -0.5 and -1 is tuning since the box is jumping for a few px when starting the rotation.
+                    this.el.center(this.parameters.rbox.cx - 0.5, this.parameters.rbox.cy - 1).transform({rotation: this.parameters.rotation + angle - angle % this.options.snapToAngle, cx: this.parameters.rbox.cx, cy: this.parameters.rbox.cy});
                 };
                 break;
 
