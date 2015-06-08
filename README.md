@@ -40,5 +40,9 @@ Deactivate resizing
 
 # Options
 
-- snapToGrid: Snaps the shape to a virtual grid while resizing (default `1`)
-- snapToAngle: Snaps to an angle when rotating (default `0.1`)
+- `snapToGrid`: Snaps the shape to a virtual grid while resizing (default `1`)
+- `snapToAngle`: Snaps to an angle when rotating (default `0.1`)
+
+# Events
+
+- `resizedone`: Fired when resizing is done
