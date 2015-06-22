@@ -8,7 +8,7 @@
             var box = el.bbox();
             x = box.x;
             y = box.y;
-            el = el.doc().parent;
+            el = el.doc().parent();
         }
 
         while (el.nodeName.toUpperCase() !== 'BODY') {
@@ -102,13 +102,9 @@
 
         // the i-param in the event holds the index of the point which is moved, when using `deepSelect`
         if (event.detail.i !== undefined) {
-            // `deepSelect` is possible with lines, too.
-            // We have to check that and getting the right point here.
-            // So first we build a point-array like the one in polygon and polyline
-            var array = this.el.type === 'line' ? [
-                [this.el.attr('x1'), this.el.attr('y1')],
-                [this.el.attr('x2'), this.el.attr('y2')]
-            ] : this.el.array.value;
+
+            // get the point array
+            var array = this.el.array().valueOf();
 
             // Save the index and the point which is moved
             this.parameters.i = event.detail.i;
@@ -234,7 +230,7 @@
                     // because rotation always works around a rotation-center, which is changed when moving the this.el.
                     // We also set the new rotation center to the center of the rbox.
                     // The -0.5 and -1 is tuning since the box is jumping for a few px when starting the rotation.
-                    this.el.center(this.parameters.rbox.cx - 0.5, this.parameters.rbox.cy - 1).transform({rotation: this.parameters.rotation + angle - angle % this.options.snapToAngle, cx: this.parameters.rbox.cx, cy: this.parameters.rbox.cy});
+                    this.el.center(this.parameters.rbox.cx - 0.5, this.parameters.rbox.cy - 1).rotate(this.parameters.rotation + angle - angle % this.options.snapToAngle, this.parameters.rbox.cx, this.parameters.rbox.cy);
                 };
                 break;
 
@@ -245,17 +241,8 @@
                     // Snapping the point to the grid
                     var snap = this.snapToGrid(diffX, diffY, this.parameters.pointCoords[0], this.parameters.pointCoords[1]);
 
-                    // We build an object to handle the different properties of a line, if needed
-                    var array = this.el.type === 'line' ? [
-                        {
-                            x1: this.parameters.pointCoords[0] + snap[0],
-                            y1: this.parameters.pointCoords[1] + snap[1]
-                        },
-                        {
-                            x2: this.parameters.pointCoords[0] + snap[0],
-                            y2: this.parameters.pointCoords[1] + snap[1]
-                        }
-                    ] : this.el.array.value;    // Otherwise we need the normal point-array
+                    // Get the point array
+                    var array = this.el.array().valueOf();
 
 
                     if (this.el.type === 'line') {
