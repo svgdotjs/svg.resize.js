@@ -1,6 +1,6 @@
 {
   "name": "svg.resize.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An extension for svn.js which allows to resize elements which are selected",
   "keywords": [
     "svg.js",
