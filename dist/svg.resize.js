@@ -3,26 +3,6 @@
 * Copyright (c) 2015 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
 
-    // Calculates the offset of an element
-    function offset(el) {
-        var x = 0, y = 0;
-
-        if ('doc' in el) {
-            var box = el.bbox();
-            x = box.x;
-            y = box.y;
-            el = el.doc().parent();
-        }
-
-        while (el.nodeName.toUpperCase() !== 'BODY') {
-            x += el.offsetLeft;
-            y += el.offsetTop;
-            el = el.offsetParent;
-        }
-
-        return {x: x, y: y};
-    }
-
     function ResizeHandler(el) {
 
         el.remember('_resizeHandler', this);
@@ -30,8 +10,17 @@
         this.el = el;
         this.parameters = {};
         this.lastUpdateCall = null;
-
+        this.p = el.doc().node.createSVGPoint();
     }
+
+    ResizeHandler.prototype.transformPoint = function(x, y, m){
+
+        this.p.x = x - (this.offset.x - window.pageXOffset);
+        this.p.y = y - (this.offset.y - window.pageYOffset);
+
+        return this.p.matrixTransform(m || this.m);
+
+    };
 
     ResizeHandler.prototype.init = function (options) {
 
@@ -52,7 +41,7 @@
                 this.options[i] = options[i];
             }
         }
-        
+
         // We listen to all these events which are specifying different edges
         this.el.on('lt.resize', function(e){ _this.resize(e || window.event); });  // Left-Top
         this.el.on('rt.resize', function(e){ _this.resize(e || window.event); });  // Right-Top
@@ -67,12 +56,12 @@
         this.el.on('rot.resize', function(e){ _this.resize(e || window.event); }); // Rotation
 
         this.el.on('point.resize', function(e){ _this.resize(e || window.event); }); // Point-Moving
-        
+
         // This call ensures, that the plugin reacts to a change of snapToGrid immediately
         this.update();
-    
+
     };
-    
+
     ResizeHandler.prototype.stop = function(){
         this.el.off('lt.resize');
         this.el.off('rt.resize');
@@ -95,11 +84,14 @@
 
         var _this = this;
 
+        this.m = this.el.node.getScreenCTM().inverse();
+        this.offset = { x: window.pageXOffset, y: window.pageYOffset };
+
         this.parameters = {
+            p: this.transformPoint(event.detail.event.clientX,event.detail.event.clientY),
             x: event.detail.x,      // x-position of the mouse when resizing started
             y: event.detail.y,      // y-position of the mouse when resizing started
             box: this.el.bbox(),    // The bounding-box of the element
-            rbox: this.el.rbox(),   // The "real"-bounding box (transformations included)
             rotation: this.el.transform().rotation  // The current rotation of the element
         };
 
@@ -216,28 +208,24 @@
                 this.calc = function (diffX, diffY) {
 
                     // yes this is kinda stupid but we need the mouse coords back...
-                    var current = {x: diffX + this.parameters.x, y: diffY + this.parameters.y};
-                    
-                    // we need the offset of the element to calculate our angle
-                    var off = offset(this.el);
+                    var current = {x: diffX + this.parameters.p.x, y: diffY + this.parameters.p.y};
 
                     // start minus middle
-                    var sAngle = Math.atan2((this.parameters.y - off.y - this.parameters.rbox.height / 2), (this.parameters.x - off.x - this.parameters.rbox.width / 2));
-
+                    var sAngle = Math.atan2((this.parameters.p.y - this.parameters.box.y - this.parameters.box.height / 2), (this.parameters.p.x - this.parameters.box.x - this.parameters.box.width / 2));
+                    
                     // end minus middle
-                    var pAngle = Math.atan2((current.y - off.y - this.parameters.rbox.height / 2), (current.x - off.x - this.parameters.rbox.width / 2));
+                    var pAngle = Math.atan2((current.y - this.parameters.box.y - this.parameters.box.height / 2), (current.x - this.parameters.box.x - this.parameters.box.width / 2));
 
                     var angle = (pAngle - sAngle) * 180 / Math.PI;
 
-                    // We have to move the element to the center of the rbox first and change the rotation afterwards
-                    // because rotation always works around a rotation-center, which is changed when moving the this.el.
-                    // We also set the new rotation center to the center of the rbox.
-                    // The -0.5 and -1 is tuning since the box is jumping for a few px when starting the rotation.
-                    this.el.center(this.parameters.rbox.cx - 0.5, this.parameters.rbox.cy - 1).rotate(this.parameters.rotation + angle - angle % this.options.snapToAngle, this.parameters.rbox.cx, this.parameters.rbox.cy);
+                    // We have to move the element to the center of the box first and change the rotation afterwards
+                    // because rotation always works around a rotation-center, which is changed when moving the element
+                    // We also set the new rotation center to the center of the box.
+                    this.el.center(this.parameters.box.cx, this.parameters.box.cy).rotate(this.parameters.rotation + angle - angle % this.options.snapToAngle, this.parameters.box.cx, this.parameters.box.cy);
                 };
                 break;
 
-            // Moving one single Point (needed when an this.el is deepSelected which means you can move every single point of the object)
+            // Moving one single Point (needed when an element is deepSelected which means you can move every single point of the object)
             case 'point':
                 this.calc = function (diffX, diffY) {
 
@@ -246,13 +234,6 @@
 
                     // Get the point array
                     var array = this.el.array().valueOf();
-
-
-                    if (this.el.type === 'line') {
-                        // Now we can specify the correct property using the array and set them
-                        this.el.attr(array[this.parameters.i]);
-                        return;
-                    }
 
                     // Changing the moved point in the array
                     array[this.parameters.i][0] = this.parameters.pointCoords[0] + snap[0];
@@ -284,8 +265,9 @@
         }
 
         // Calculate the difference between the mouseposition at start and now
-        var diffX = event.pageX - this.parameters.x
-            , diffY = event.pageY - this.parameters.y;
+        var p = this.transformPoint(event.clientX, event.clientY);
+        var diffX = p.x - this.parameters.p.x,
+            diffY = p.y - this.parameters.p.y;
 
         this.lastUpdateCall = [diffX, diffY];
 
@@ -293,7 +275,7 @@
         this.calc(diffX, diffY);
     };
 
-    // Is called on mouseup. 
+    // Is called on mouseup.
     // Removes the update-function from the mousemove event
     ResizeHandler.prototype.done = function () {
         this.lastUpdateCall = null;
