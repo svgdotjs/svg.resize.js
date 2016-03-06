@@ -1,4 +1,5 @@
-;(function () {
+;
+(function() {
 
     function ResizeHandler(el) {
 
@@ -10,7 +11,7 @@
         this.p = el.doc().node.createSVGPoint();
     }
 
-    ResizeHandler.prototype.transformPoint = function(x, y, m){
+    ResizeHandler.prototype.transformPoint = function(x, y, m) {
 
         this.p.x = x - (this.offset.x - window.pageXOffset);
         this.p.y = y - (this.offset.y - window.pageYOffset);
@@ -19,7 +20,7 @@
 
     };
 
-    ResizeHandler.prototype.init = function (options) {
+    ResizeHandler.prototype.init = function(options) {
 
         var _this = this;
 
@@ -40,26 +41,26 @@
         }
 
         // We listen to all these events which are specifying different edges
-        this.el.on('lt.resize', function(e){ _this.resize(e || window.event); });  // Left-Top
-        this.el.on('rt.resize', function(e){ _this.resize(e || window.event); });  // Right-Top
-        this.el.on('rb.resize', function(e){ _this.resize(e || window.event); });  // Right-Bottom
-        this.el.on('lb.resize', function(e){ _this.resize(e || window.event); });  // Left-Bottom
+        this.el.on('lt.resize', function(e) { _this.resize(e || window.event); }); // Left-Top
+        this.el.on('rt.resize', function(e) { _this.resize(e || window.event); }); // Right-Top
+        this.el.on('rb.resize', function(e) { _this.resize(e || window.event); }); // Right-Bottom
+        this.el.on('lb.resize', function(e) { _this.resize(e || window.event); }); // Left-Bottom
 
-        this.el.on('t.resize', function(e){ _this.resize(e || window.event); });   // Top
-        this.el.on('r.resize', function(e){ _this.resize(e || window.event); });   // Right
-        this.el.on('b.resize', function(e){ _this.resize(e || window.event); });   // Bottom
-        this.el.on('l.resize', function(e){ _this.resize(e || window.event); });   // Left
+        this.el.on('t.resize', function(e) { _this.resize(e || window.event); }); // Top
+        this.el.on('r.resize', function(e) { _this.resize(e || window.event); }); // Right
+        this.el.on('b.resize', function(e) { _this.resize(e || window.event); }); // Bottom
+        this.el.on('l.resize', function(e) { _this.resize(e || window.event); }); // Left
 
-        this.el.on('rot.resize', function(e){ _this.resize(e || window.event); }); // Rotation
+        this.el.on('rot.resize', function(e) { _this.resize(e || window.event); }); // Rotation
 
-        this.el.on('point.resize', function(e){ _this.resize(e || window.event); }); // Point-Moving
+        this.el.on('point.resize', function(e) { _this.resize(e || window.event); }); // Point-Moving
 
         // This call ensures, that the plugin reacts to a change of snapToGrid immediately
         this.update();
 
     };
 
-    ResizeHandler.prototype.stop = function(){
+    ResizeHandler.prototype.stop = function() {
         this.el.off('lt.resize');
         this.el.off('rt.resize');
         this.el.off('rb.resize');
@@ -77,7 +78,7 @@
         return this;
     };
 
-    ResizeHandler.prototype.resize = function (event) {
+    ResizeHandler.prototype.resize = function(event) {
 
         var _this = this;
 
@@ -85,12 +86,17 @@
         this.offset = { x: window.pageXOffset, y: window.pageYOffset };
 
         this.parameters = {
-            p: this.transformPoint(event.detail.event.clientX,event.detail.event.clientY),
-            x: event.detail.x,      // x-position of the mouse when resizing started
-            y: event.detail.y,      // y-position of the mouse when resizing started
-            box: this.el.bbox(),    // The bounding-box of the element
-            rotation: this.el.transform().rotation  // The current rotation of the element
+            type: this.el.type,
+            p: this.transformPoint(event.detail.event.clientX, event.detail.event.clientY),
+            x: event.detail.x, // x-position of the mouse when resizing started
+            y: event.detail.y, // y-position of the mouse when resizing started
+            box: this.el.bbox(), // The bounding-box of the element
+            rotation: this.el.transform().rotation // The current rotation of the element
         };
+
+        if (this.el.type === "text") {
+            this.parameters.fontSize = this.el.attr()["font-size"];
+        }
 
         // the i-param in the event holds the index of the point which is moved, when using `deepSelect`
         if (event.detail.i !== undefined) {
@@ -109,7 +115,7 @@
             // Left-Top-Edge
             case 'lt':
                 // We build a calculating function for every case which gives us the new position of the this.el
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     // The procedure is always the same
                     // First we snap the edge to the given grid (snapping to 1px grid is normal resizing)
                     var snap = this.snapToGrid(diffX, diffY);
@@ -117,99 +123,141 @@
                     // Now we check if the new height and width still valid (> 0)
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
+
+                        // check if the element is text
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
                 };
                 break;
 
-            // Right-Top
+                // Right-Top
             case 'rt':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
                     if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).size(this.parameters.box.width + snap[0], this.parameters.box.height - snap[1]);
                     }
                 };
                 break;
 
-            // Right-Bottom
+                // Right-Bottom
             case 'rb':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).size(this.parameters.box.width + snap[0], this.parameters.box.height + snap[1]);
                     }
                 };
                 break;
 
-            // Left-Bottom
+                // Left-Bottom
             case 'lb':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).size(this.parameters.box.width - snap[0], this.parameters.box.height + snap[1]);
                     }
                 };
                 break;
 
-            // Top
+                // Top
             case 't':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
                     if (this.parameters.box.height - snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).height(this.parameters.box.height - snap[1]);
                     }
                 };
                 break;
 
-            // Right
+                // Right
             case 'r':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.width + snap[0] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).width(this.parameters.box.width + snap[0]);
                     }
                 };
                 break;
 
-            // Bottom
+                // Bottom
             case 'b':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).height(this.parameters.box.height + snap[1]);
                     }
                 };
                 break;
 
-            // Left
+                // Left
             case 'l':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
                     if (this.parameters.box.width - snap[0] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
                     }
                 };
                 break;
 
-            // Rotation
+                // Rotation
             case 'rot':
                 // s.a.
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
 
                     // yes this is kinda stupid but we need the mouse coords back...
-                    var current = {x: diffX + this.parameters.p.x, y: diffY + this.parameters.p.y};
+                    var current = { x: diffX + this.parameters.p.x, y: diffY + this.parameters.p.y };
 
                     // start minus middle
                     var sAngle = Math.atan2((this.parameters.p.y - this.parameters.box.y - this.parameters.box.height / 2), (this.parameters.p.x - this.parameters.box.x - this.parameters.box.width / 2));
-                    
+
                     // end minus middle
                     var pAngle = Math.atan2((current.y - this.parameters.box.y - this.parameters.box.height / 2), (current.x - this.parameters.box.x - this.parameters.box.width / 2));
 
@@ -222,9 +270,9 @@
                 };
                 break;
 
-            // Moving one single Point (needed when an element is deepSelected which means you can move every single point of the object)
+                // Moving one single Point (needed when an element is deepSelected which means you can move every single point of the object)
             case 'point':
-                this.calc = function (diffX, diffY) {
+                this.calc = function(diffX, diffY) {
 
                     // Snapping the point to the grid
                     var snap = this.snapToGrid(diffX, diffY, this.parameters.pointCoords[0], this.parameters.pointCoords[1]);
@@ -242,17 +290,17 @@
         }
 
         // When resizing started, we have to register events for...
-        SVG.on(window, 'mousemove.resize', function (e) {
+        SVG.on(window, 'mousemove.resize', function(e) {
             _this.update(e || window.event);
-        });    // mousemove to keep track of the changes and...
-        SVG.on(window, 'mouseup.resize', function () {
+        }); // mousemove to keep track of the changes and...
+        SVG.on(window, 'mouseup.resize', function() {
             _this.done();
-        });        // mouseup to know when resizing stops
+        }); // mouseup to know when resizing stops
 
     };
 
     // The update-function redraws the element every time the mouse is moving
-    ResizeHandler.prototype.update = function (event) {
+    ResizeHandler.prototype.update = function(event) {
 
         if (!event) {
             if (this.lastUpdateCall) {
@@ -274,7 +322,7 @@
 
     // Is called on mouseup.
     // Removes the update-function from the mousemove event
-    ResizeHandler.prototype.done = function () {
+    ResizeHandler.prototype.done = function() {
         this.lastUpdateCall = null;
         SVG.off(window, 'mousemove.resize');
         SVG.off(window, 'mouseup.resize');
@@ -283,7 +331,7 @@
 
     // The flag is used to determine whether the resizing is used with a left-Point (first bit) and top-point (second bit)
     // In this cases the temp-values are calculated differently
-    ResizeHandler.prototype.snapToGrid = function (diffX, diffY, flag, pointCoordsY) {
+    ResizeHandler.prototype.snapToGrid = function(diffX, diffY, flag, pointCoordsY) {
 
         var temp;
 
@@ -305,7 +353,7 @@
 
     SVG.extend(SVG.Element, {
         // Resize element with mouse
-        resize: function (options) {
+        resize: function(options) {
 
             (this.remember('_resizeHandler') || new ResizeHandler(this)).init(options || {});
 
@@ -316,8 +364,8 @@
     });
 
     SVG.Element.prototype.resize.defaults = {
-        snapToAngle: 0.1,    // Specifies the speed the rotation is happening when moving the mouse
-        snapToGrid: 1        // Snaps to a grid of `snapToGrid` Pixels
+        snapToAngle: 0.1, // Specifies the speed the rotation is happening when moving the mouse
+        snapToGrid: 1 // Snaps to a grid of `snapToGrid` Pixels
     };
 
 }).call(this);
