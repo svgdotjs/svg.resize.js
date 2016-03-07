@@ -132,7 +132,7 @@
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
-                            return false;
+                            return;
                         }                    
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
@@ -149,7 +149,7 @@
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize + snap[0]);
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).size(this.parameters.box.width + snap[0], this.parameters.box.height - snap[1]);
@@ -166,7 +166,7 @@
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize + snap[0]);
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y).size(this.parameters.box.width + snap[0], this.parameters.box.height + snap[1]);
@@ -183,7 +183,7 @@
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).size(this.parameters.box.width - snap[0], this.parameters.box.height + snap[1]);
@@ -199,7 +199,7 @@
                     if (this.parameters.box.height - snap[1] > 0) {
                         // Disable the font-resizing if it is not from the corner of bounding-box
                         if (this.parameters.type === "text") {
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).height(this.parameters.box.height - snap[1]);
@@ -214,7 +214,7 @@
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.width + snap[0] > 0) {
                         if (this.parameters.type === "text") {
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y).width(this.parameters.box.width + snap[0]);
@@ -229,7 +229,7 @@
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.height + snap[1] > 0) {
                         if (this.parameters.type === "text") {
-                            return false;
+                            return;
                         }
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y).height(this.parameters.box.height + snap[1]);
@@ -244,7 +244,7 @@
                     var snap = this.snapToGrid(diffX, diffY, 1);
                     if (this.parameters.box.width - snap[0] > 0) {
                         if (this.parameters.type === "text") {
-                            return false;
+                            return;
                         }
                         
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
