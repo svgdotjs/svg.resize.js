@@ -1,6 +1,6 @@
-/*! svg.resize.js - v1.1.0 - 2015-06-22
+/*! svg.resize.js - v1.1.0 - 2016-03-07
 * https://github.com/Fuzzyma/svg.resize.js
-* Copyright (c) 2015 Ulrich-Matthias Schäfer; Licensed MIT */
+* Copyright (c) 2016 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
 
     function ResizeHandler(el) {
@@ -88,12 +88,18 @@
         this.offset = { x: window.pageXOffset, y: window.pageYOffset };
 
         this.parameters = {
+            type: this.el.type, // the type of element
             p: this.transformPoint(event.detail.event.clientX,event.detail.event.clientY),
             x: event.detail.x,      // x-position of the mouse when resizing started
             y: event.detail.y,      // y-position of the mouse when resizing started
             box: this.el.bbox(),    // The bounding-box of the element
             rotation: this.el.transform().rotation  // The current rotation of the element
         };
+
+        // Add font-size parameter if the element type is text
+        if (this.el.type === "text") {
+            this.parameters.fontSize = this.el.attr()["font-size"];
+        }
 
         // the i-param in the event holds the index of the point which is moved, when using `deepSelect`
         if (event.detail.i !== undefined) {
@@ -120,6 +126,18 @@
                     // Now we check if the new height and width still valid (> 0)
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
+                    
+                        /*
+                         * but first check if the element is text box, so we can change the font size instead of
+                         * the width and height
+                         */
+                        
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
+                            return false;
+                        }                    
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
                 };
@@ -131,6 +149,12 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
                     if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).size(this.parameters.box.width + snap[0], this.parameters.box.height - snap[1]);
                     }
                 };
@@ -142,6 +166,12 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).size(this.parameters.box.width + snap[0], this.parameters.box.height + snap[1]);
                     }
                 };
@@ -153,6 +183,12 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).size(this.parameters.box.width - snap[0], this.parameters.box.height + snap[1]);
                     }
                 };
@@ -164,6 +200,11 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
                     if (this.parameters.box.height - snap[1] > 0) {
+                        // Disable the font-resizing if it is not from the corner of bounding-box
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).height(this.parameters.box.height - snap[1]);
                     }
                 };
@@ -175,6 +216,10 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.width + snap[0] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).width(this.parameters.box.width + snap[0]);
                     }
                 };
@@ -186,6 +231,10 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
                     if (this.parameters.box.height + snap[1] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).height(this.parameters.box.height + snap[1]);
                     }
                 };
@@ -197,6 +246,10 @@
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
                     if (this.parameters.box.width - snap[0] > 0) {
+                        if (this.parameters.type === "text") {
+                            return false;
+                        }
+                        
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
                     }
                 };
