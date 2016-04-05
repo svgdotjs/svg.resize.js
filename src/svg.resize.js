@@ -1,5 +1,7 @@
 ;(function () {
 
+
+
     function ResizeHandler(el) {
 
         el.remember('_resizeHandler', this);
@@ -18,6 +20,15 @@
         return this.p.matrixTransform(m || this.m);
 
     };
+
+    ResizeHandler.prototype._extractPosition = function(event) {
+        // Extract a position from a mouse/touch event.
+        // Returns { x: .., y: .. }
+        return {
+            x: event.clientX || event.touches[0].pageX,
+            y: event.clientY || event.touches[0].pageY
+        };
+    }
 
     ResizeHandler.prototype.init = function (options) {
 
@@ -84,9 +95,10 @@
         this.m = this.el.node.getScreenCTM().inverse();
         this.offset = { x: window.pageXOffset, y: window.pageYOffset };
 
+        var txPt = this._extractPosition(event.detail.event);
         this.parameters = {
             type: this.el.type, // the type of element
-            p: this.transformPoint(event.detail.event.clientX,event.detail.event.clientY),
+            p: this.transformPoint(txPt.x, txPt.y),
             x: event.detail.x,      // x-position of the mouse when resizing started
             y: event.detail.y,      // y-position of the mouse when resizing started
             box: this.el.bbox(),    // The bounding-box of the element
@@ -123,17 +135,17 @@
                     // Now we check if the new height and width still valid (> 0)
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
-                    
+
                         /*
                          * but first check if the element is text box, so we can change the font size instead of
                          * the width and height
                          */
-                        
+
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
                             return;
-                        }                    
+                        }
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
@@ -246,7 +258,7 @@
                         if (this.parameters.type === "text") {
                             return;
                         }
-                        
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
                     }
                 };
@@ -262,7 +274,7 @@
 
                     // start minus middle
                     var sAngle = Math.atan2((this.parameters.p.y - this.parameters.box.y - this.parameters.box.height / 2), (this.parameters.p.x - this.parameters.box.x - this.parameters.box.width / 2));
-                    
+
                     // end minus middle
                     var pAngle = Math.atan2((current.y - this.parameters.box.y - this.parameters.box.height / 2), (current.x - this.parameters.box.x - this.parameters.box.width / 2));
 
@@ -295,12 +307,20 @@
         }
 
         // When resizing started, we have to register events for...
+        // Touches.
+        SVG.on(window, 'touchmove.resize', function(e) {
+            _this.update(e || window.event);
+        })
+        SVG.on(window, 'touchend.resize', function(e) {
+            _this.done();
+        })
+        // Mouse.
         SVG.on(window, 'mousemove.resize', function (e) {
             _this.update(e || window.event);
-        });    // mousemove to keep track of the changes and...
+        });
         SVG.on(window, 'mouseup.resize', function () {
             _this.done();
-        });        // mouseup to know when resizing stops
+        });
 
     };
 
@@ -315,7 +335,10 @@
         }
 
         // Calculate the difference between the mouseposition at start and now
-        var p = this.transformPoint(event.clientX, event.clientY);
+        var txPt = this._extractPosition(event);
+        var p = this.transformPoint(txPt.x, txPt.y);
+
+        //var p = this.transformPoint(event.clientX, event.clientY);
         var diffX = p.x - this.parameters.p.x,
             diffY = p.y - this.parameters.p.y;
 
@@ -331,6 +354,8 @@
         this.lastUpdateCall = null;
         SVG.off(window, 'mousemove.resize');
         SVG.off(window, 'mouseup.resize');
+        SVG.off(window, 'touchmove.resize');
+        SVG.off(window, 'touchend.resize');
         this.el.fire('resizedone');
     };
 
