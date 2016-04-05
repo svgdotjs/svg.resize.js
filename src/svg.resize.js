@@ -337,7 +337,7 @@
         // Calculate the difference between the mouseposition at start and now
         var txPt = this._extractPosition(event);
         var p = this.transformPoint(txPt.x, txPt.y);
-	
+
         var diffX = p.x - this.parameters.p.x,
             diffY = p.y - this.parameters.p.y;
 
@@ -346,8 +346,8 @@
         // Calculate the new position and height / width of the element
         this.calc(diffX, diffY);
 
-	// Emit an event to say we have changed.
-        this.el.fire('resizing', [diffX, diffY]);
+       // Emit an event to say we have changed.
+        this.el.fire('resizing', {dx: diffX, dy: diffY, event: event});
     };
 
     // Is called on mouseup.
