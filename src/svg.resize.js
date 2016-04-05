@@ -306,11 +306,6 @@
                 };
         }
 
-        // Emit an event to say we have changed.
-        this._calc = this.calc;
-        this.calc = function(diffX, diffY) { _this.el.fire('resizing'); return _this._calc(diffX, diffY); }
-        this.el.fire('resizing');
-
         // When resizing started, we have to register events for...
         // Touches.
         SVG.on(window, 'touchmove.resize', function(e) {
@@ -342,8 +337,7 @@
         // Calculate the difference between the mouseposition at start and now
         var txPt = this._extractPosition(event);
         var p = this.transformPoint(txPt.x, txPt.y);
-
-        //var p = this.transformPoint(event.clientX, event.clientY);
+	
         var diffX = p.x - this.parameters.p.x,
             diffY = p.y - this.parameters.p.y;
 
@@ -351,6 +345,9 @@
 
         // Calculate the new position and height / width of the element
         this.calc(diffX, diffY);
+
+	// Emit an event to say we have changed.
+        this.el.fire('resizing', [diffX, diffY]);
     };
 
     // Is called on mouseup.
