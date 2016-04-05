@@ -306,6 +306,11 @@
                 };
         }
 
+        // Emit an event to say we have changed.
+        this._calc = this.calc;
+        this.calc = function(diffX, diffY) { _this.el.fire('resizing'); return _this._calc(diffX, diffY); }
+        this.el.fire('resizing');
+
         // When resizing started, we have to register events for...
         // Touches.
         SVG.on(window, 'touchmove.resize', function(e) {
