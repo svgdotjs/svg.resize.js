@@ -123,17 +123,17 @@
                     // Now we check if the new height and width still valid (> 0)
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
-                    
+
                         /*
                          * but first check if the element is text box, so we can change the font size instead of
                          * the width and height
                          */
-                        
+
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
                             return;
-                        }                    
+                        }
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
@@ -246,7 +246,7 @@
                         if (this.parameters.type === "text") {
                             return;
                         }
-                        
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
                     }
                 };
@@ -262,7 +262,7 @@
 
                     // start minus middle
                     var sAngle = Math.atan2((this.parameters.p.y - this.parameters.box.y - this.parameters.box.height / 2), (this.parameters.p.x - this.parameters.box.x - this.parameters.box.width / 2));
-                    
+
                     // end minus middle
                     var pAngle = Math.atan2((current.y - this.parameters.box.y - this.parameters.box.height / 2), (current.x - this.parameters.box.x - this.parameters.box.width / 2));
 
@@ -341,7 +341,7 @@
         var temp;
 
         // If `pointCoordsY` is given, a single Point has to be snapped (deepSelect). That's why we need a different temp-value
-        if (pointCoordsY) {
+        if (typeof pointCoordsY !== 'undefined') {
             // Note that flag = pointCoordsX in this case
             temp = [(flag + diffX) % this.options.snapToGrid, (pointCoordsY + diffY) % this.options.snapToGrid];
         } else {
