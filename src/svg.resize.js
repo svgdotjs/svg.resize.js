@@ -358,8 +358,37 @@
                   temp[1] :
                   temp[1] - (diffY < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
 
-        return [diffX, diffY];
+        return this.constraintToBox(diffX, diffY, flag, pointCoordsY);
 
+    };
+
+    // keep element within constrained box
+    ResizeHandler.prototype.constraintToBox = function (diffX, diffY, flag, pointCoordsY) {
+        //return [diffX, diffY]
+        var c = this.options.constraint || {}
+        var orgX, orgY
+
+        if (typeof pointCoordsY !== 'undefined') {
+          orgX = flag
+          orgY = pointCoordsY
+        } else {
+          orgX = this.parameters.box.x + (flag & 1 ? 0 : this.parameters.box.width)
+          orgY = this.parameters.box.y + (flag & (1<<1) ? 0 : this.parameters.box.height)
+        }
+
+        if (typeof c.minX !== 'undefined' && orgX + diffX < c.minX)
+          diffX = c.minX - orgX
+
+        if (typeof c.maxX !== 'undefined' && orgX + diffX > c.maxX)
+          diffX = c.maxX - orgX
+
+        if (typeof c.minY !== 'undefined' && orgY + diffY < c.minY)
+          diffY = c.minY - orgY
+
+        if (typeof c.maxY !== 'undefined' && orgY + diffY > c.maxY)
+          diffY = c.maxY - orgY;
+
+        return [diffX, diffY];
     };
 
     SVG.extend(SVG.Element, {
@@ -376,7 +405,8 @@
 
     SVG.Element.prototype.resize.defaults = {
         snapToAngle: 0.1,    // Specifies the speed the rotation is happening when moving the mouse
-        snapToGrid: 1        // Snaps to a grid of `snapToGrid` Pixels
+        snapToGrid: 1,       // Snaps to a grid of `snapToGrid` Pixels
+        constraint: {}       // keep element within constrained box
     };
 
 }).call(this);
