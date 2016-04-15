@@ -350,8 +350,14 @@
             temp = [(this.parameters.box.x + diffX + (flag & 1 ? 0 : this.parameters.box.width)) % this.options.snapToGrid, (this.parameters.box.y + diffY + (flag & (1 << 1) ? 0 : this.parameters.box.height)) % this.options.snapToGrid];
         }
 
-        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ? temp[0] : temp[0] - this.options.snapToGrid) + (temp[0] < 0 ? this.options.snapToGrid : 0);
-        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ? temp[1] : temp[1] - this.options.snapToGrid) + (temp[1] < 0 ? this.options.snapToGrid : 0);
+
+        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ?
+                  temp[0] :
+                  temp[0] - (diffX < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ?
+                  temp[1] :
+                  temp[1] - (diffY < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+
         return [diffX, diffY];
 
     };
