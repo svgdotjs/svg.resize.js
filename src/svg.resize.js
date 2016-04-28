@@ -368,7 +368,7 @@
         var temp;
 
         // If `pointCoordsY` is given, a single Point has to be snapped (deepSelect). That's why we need a different temp-value
-        if (pointCoordsY) {
+        if (typeof pointCoordsY !== 'undefined') {
             // Note that flag = pointCoordsX in this case
             temp = [(flag + diffX) % this.options.snapToGrid, (pointCoordsY + diffY) % this.options.snapToGrid];
         } else {
@@ -377,10 +377,45 @@
             temp = [(this.parameters.box.x + diffX + (flag & 1 ? 0 : this.parameters.box.width)) % this.options.snapToGrid, (this.parameters.box.y + diffY + (flag & (1 << 1) ? 0 : this.parameters.box.height)) % this.options.snapToGrid];
         }
 
-        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ? temp[0] : temp[0] - this.options.snapToGrid) + (temp[0] < 0 ? this.options.snapToGrid : 0);
-        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ? temp[1] : temp[1] - this.options.snapToGrid) + (temp[1] < 0 ? this.options.snapToGrid : 0);
-        return [diffX, diffY];
 
+        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ?
+                  temp[0] :
+                  temp[0] - (diffX < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ?
+                  temp[1] :
+                  temp[1] - (diffY < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+
+        return this.constraintToBox(diffX, diffY, flag, pointCoordsY);
+
+    };
+
+    // keep element within constrained box
+    ResizeHandler.prototype.constraintToBox = function (diffX, diffY, flag, pointCoordsY) {
+        //return [diffX, diffY]
+        var c = this.options.constraint || {}
+        var orgX, orgY
+
+        if (typeof pointCoordsY !== 'undefined') {
+          orgX = flag
+          orgY = pointCoordsY
+        } else {
+          orgX = this.parameters.box.x + (flag & 1 ? 0 : this.parameters.box.width)
+          orgY = this.parameters.box.y + (flag & (1<<1) ? 0 : this.parameters.box.height)
+        }
+
+        if (typeof c.minX !== 'undefined' && orgX + diffX < c.minX)
+          diffX = c.minX - orgX
+
+        if (typeof c.maxX !== 'undefined' && orgX + diffX > c.maxX)
+          diffX = c.maxX - orgX
+
+        if (typeof c.minY !== 'undefined' && orgY + diffY < c.minY)
+          diffY = c.minY - orgY
+
+        if (typeof c.maxY !== 'undefined' && orgY + diffY > c.maxY)
+          diffY = c.maxY - orgY;
+
+        return [diffX, diffY];
     };
 
     SVG.extend(SVG.Element, {
@@ -397,7 +432,8 @@
 
     SVG.Element.prototype.resize.defaults = {
         snapToAngle: 0.1,    // Specifies the speed the rotation is happening when moving the mouse
-        snapToGrid: 1        // Snaps to a grid of `snapToGrid` Pixels
+        snapToGrid: 1,       // Snaps to a grid of `snapToGrid` Pixels
+        constraint: {}       // keep element within constrained box
     };
 
 }).call(this);
