@@ -28,7 +28,7 @@
             x: event.clientX || event.touches[0].pageX,
             y: event.clientY || event.touches[0].pageY
         };
-    }
+    };
 
     ResizeHandler.prototype.init = function (options) {
 
@@ -310,10 +310,10 @@
         // Touches.
         SVG.on(window, 'touchmove.resize', function(e) {
             _this.update(e || window.event);
-        })
-        SVG.on(window, 'touchend.resize', function(e) {
+        });
+        SVG.on(window, 'touchend.resize', function() {
             _this.done();
-        })
+        });
         // Mouse.
         SVG.on(window, 'mousemove.resize', function (e) {
             _this.update(e || window.event);
@@ -392,28 +392,32 @@
     // keep element within constrained box
     ResizeHandler.prototype.constraintToBox = function (diffX, diffY, flag, pointCoordsY) {
         //return [diffX, diffY]
-        var c = this.options.constraint || {}
-        var orgX, orgY
+        var c = this.options.constraint || {};
+        var orgX, orgY;
 
         if (typeof pointCoordsY !== 'undefined') {
-          orgX = flag
-          orgY = pointCoordsY
+          orgX = flag;
+          orgY = pointCoordsY;
         } else {
-          orgX = this.parameters.box.x + (flag & 1 ? 0 : this.parameters.box.width)
-          orgY = this.parameters.box.y + (flag & (1<<1) ? 0 : this.parameters.box.height)
+          orgX = this.parameters.box.x + (flag & 1 ? 0 : this.parameters.box.width);
+          orgY = this.parameters.box.y + (flag & (1<<1) ? 0 : this.parameters.box.height);
         }
 
-        if (typeof c.minX !== 'undefined' && orgX + diffX < c.minX)
-          diffX = c.minX - orgX
+        if (typeof c.minX !== 'undefined' && orgX + diffX < c.minX) {
+          diffX = c.minX - orgX;
+        }
 
-        if (typeof c.maxX !== 'undefined' && orgX + diffX > c.maxX)
-          diffX = c.maxX - orgX
+        if (typeof c.maxX !== 'undefined' && orgX + diffX > c.maxX) {
+          diffX = c.maxX - orgX;
+        }
 
-        if (typeof c.minY !== 'undefined' && orgY + diffY < c.minY)
-          diffY = c.minY - orgY
+        if (typeof c.minY !== 'undefined' && orgY + diffY < c.minY) {
+          diffY = c.minY - orgY;
+        }
 
-        if (typeof c.maxY !== 'undefined' && orgY + diffY > c.maxY)
+        if (typeof c.maxY !== 'undefined' && orgY + diffY > c.maxY) {
           diffY = c.maxY - orgY;
+        }
 
         return [diffX, diffY];
     };

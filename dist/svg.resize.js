@@ -1,7 +1,9 @@
-/*! svg.resize.js - v1.1.1 - 2016-03-07
+/*! svg.resize.js - v1.3.0 - 2016-04-28
 * https://github.com/Fuzzyma/svg.resize.js
 * Copyright (c) 2016 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
+
+
 
     function ResizeHandler(el) {
 
@@ -20,6 +22,15 @@
 
         return this.p.matrixTransform(m || this.m);
 
+    };
+
+    ResizeHandler.prototype._extractPosition = function(event) {
+        // Extract a position from a mouse/touch event.
+        // Returns { x: .., y: .. }
+        return {
+            x: event.clientX || event.touches[0].pageX,
+            y: event.clientY || event.touches[0].pageY
+        };
     };
 
     ResizeHandler.prototype.init = function (options) {
@@ -87,9 +98,10 @@
         this.m = this.el.node.getScreenCTM().inverse();
         this.offset = { x: window.pageXOffset, y: window.pageYOffset };
 
+        var txPt = this._extractPosition(event.detail.event);
         this.parameters = {
             type: this.el.type, // the type of element
-            p: this.transformPoint(event.detail.event.clientX,event.detail.event.clientY),
+            p: this.transformPoint(txPt.x, txPt.y),
             x: event.detail.x,      // x-position of the mouse when resizing started
             y: event.detail.y,      // y-position of the mouse when resizing started
             box: this.el.bbox(),    // The bounding-box of the element
@@ -126,17 +138,17 @@
                     // Now we check if the new height and width still valid (> 0)
                     if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
-                    
+
                         /*
                          * but first check if the element is text box, so we can change the font size instead of
                          * the width and height
                          */
-                        
+
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
                             return;
-                        }                    
+                        }
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
@@ -249,7 +261,7 @@
                         if (this.parameters.type === "text") {
                             return;
                         }
-                        
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
                     }
                 };
@@ -265,7 +277,7 @@
 
                     // start minus middle
                     var sAngle = Math.atan2((this.parameters.p.y - this.parameters.box.y - this.parameters.box.height / 2), (this.parameters.p.x - this.parameters.box.x - this.parameters.box.width / 2));
-                    
+
                     // end minus middle
                     var pAngle = Math.atan2((current.y - this.parameters.box.y - this.parameters.box.height / 2), (current.x - this.parameters.box.x - this.parameters.box.width / 2));
 
@@ -298,12 +310,20 @@
         }
 
         // When resizing started, we have to register events for...
+        // Touches.
+        SVG.on(window, 'touchmove.resize', function(e) {
+            _this.update(e || window.event);
+        });
+        SVG.on(window, 'touchend.resize', function() {
+            _this.done();
+        });
+        // Mouse.
         SVG.on(window, 'mousemove.resize', function (e) {
             _this.update(e || window.event);
-        });    // mousemove to keep track of the changes and...
+        });
         SVG.on(window, 'mouseup.resize', function () {
             _this.done();
-        });        // mouseup to know when resizing stops
+        });
 
     };
 
@@ -318,7 +338,9 @@
         }
 
         // Calculate the difference between the mouseposition at start and now
-        var p = this.transformPoint(event.clientX, event.clientY);
+        var txPt = this._extractPosition(event);
+        var p = this.transformPoint(txPt.x, txPt.y);
+
         var diffX = p.x - this.parameters.p.x,
             diffY = p.y - this.parameters.p.y;
 
@@ -326,6 +348,9 @@
 
         // Calculate the new position and height / width of the element
         this.calc(diffX, diffY);
+
+       // Emit an event to say we have changed.
+        this.el.fire('resizing', {dx: diffX, dy: diffY, event: event});
     };
 
     // Is called on mouseup.
@@ -334,6 +359,8 @@
         this.lastUpdateCall = null;
         SVG.off(window, 'mousemove.resize');
         SVG.off(window, 'mouseup.resize');
+        SVG.off(window, 'touchmove.resize');
+        SVG.off(window, 'touchend.resize');
         this.el.fire('resizedone');
     };
 
@@ -344,7 +371,7 @@
         var temp;
 
         // If `pointCoordsY` is given, a single Point has to be snapped (deepSelect). That's why we need a different temp-value
-        if (pointCoordsY) {
+        if (typeof pointCoordsY !== 'undefined') {
             // Note that flag = pointCoordsX in this case
             temp = [(flag + diffX) % this.options.snapToGrid, (pointCoordsY + diffY) % this.options.snapToGrid];
         } else {
@@ -353,10 +380,49 @@
             temp = [(this.parameters.box.x + diffX + (flag & 1 ? 0 : this.parameters.box.width)) % this.options.snapToGrid, (this.parameters.box.y + diffY + (flag & (1 << 1) ? 0 : this.parameters.box.height)) % this.options.snapToGrid];
         }
 
-        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ? temp[0] : temp[0] - this.options.snapToGrid) + (temp[0] < 0 ? this.options.snapToGrid : 0);
-        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ? temp[1] : temp[1] - this.options.snapToGrid) + (temp[1] < 0 ? this.options.snapToGrid : 0);
-        return [diffX, diffY];
 
+        diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ?
+                  temp[0] :
+                  temp[0] - (diffX < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+        diffY -= (Math.abs(temp[1]) < this.options.snapToGrid / 2 ?
+                  temp[1] :
+                  temp[1] - (diffY < 0 ? -this.options.snapToGrid : this.options.snapToGrid));
+
+        return this.constraintToBox(diffX, diffY, flag, pointCoordsY);
+
+    };
+
+    // keep element within constrained box
+    ResizeHandler.prototype.constraintToBox = function (diffX, diffY, flag, pointCoordsY) {
+        //return [diffX, diffY]
+        var c = this.options.constraint || {};
+        var orgX, orgY;
+
+        if (typeof pointCoordsY !== 'undefined') {
+          orgX = flag;
+          orgY = pointCoordsY;
+        } else {
+          orgX = this.parameters.box.x + (flag & 1 ? 0 : this.parameters.box.width);
+          orgY = this.parameters.box.y + (flag & (1<<1) ? 0 : this.parameters.box.height);
+        }
+
+        if (typeof c.minX !== 'undefined' && orgX + diffX < c.minX) {
+          diffX = c.minX - orgX;
+        }
+
+        if (typeof c.maxX !== 'undefined' && orgX + diffX > c.maxX) {
+          diffX = c.maxX - orgX;
+        }
+
+        if (typeof c.minY !== 'undefined' && orgY + diffY < c.minY) {
+          diffY = c.minY - orgY;
+        }
+
+        if (typeof c.maxY !== 'undefined' && orgY + diffY > c.maxY) {
+          diffY = c.maxY - orgY;
+        }
+
+        return [diffX, diffY];
     };
 
     SVG.extend(SVG.Element, {
@@ -373,7 +439,8 @@
 
     SVG.Element.prototype.resize.defaults = {
         snapToAngle: 0.1,    // Specifies the speed the rotation is happening when moving the mouse
-        snapToGrid: 1        // Snaps to a grid of `snapToGrid` Pixels
+        snapToGrid: 1,       // Snaps to a grid of `snapToGrid` Pixels
+        constraint: {}       // keep element within constrained box
     };
 
 }).call(this);
