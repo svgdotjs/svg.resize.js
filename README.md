@@ -38,7 +38,7 @@ Deactivate resizing
 
 	rect.resize('stop');
 
-Limit resizing within a give box
+Keep element within constrained box
 
 	var draw = SVG('drawing');
 	var rect = draw.rect(100, 100);
