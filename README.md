@@ -38,10 +38,27 @@ Deactivate resizing
 
 	rect.resize('stop');
 
+Limit resizing within a give box
+
+	var draw = SVG('drawing');
+	var rect = draw.rect(100, 100);
+	var opt = {
+		constraint: {
+			minX: 0,
+			minY: 0,
+			maxX: 200,
+			maxY: 300
+		}
+	};
+	rect.select().resize(opt)
+
+
 # Options
 
 - `snapToGrid`: Snaps the shape to a virtual grid while resizing (default `1`)
 - `snapToAngle`: Snaps to an angle when rotating (default `0.1`)
+- `constraint`: Keep element within constrained box (see usage above); The box snaps to the grid defined by `snapToGrid`.
+
 
 # Events
 
