@@ -24,7 +24,7 @@ For a demo see http://fuzzyma.github.io/svg.resize.js/
 		<div id="myDrawing"></div>
 
 		var drawing = new SVG('myDrawing').size(500, 500);
-		drawing.rect(50,50).select().resize()
+		drawing.rect(50,50).selectize().resize()
 
 # Usage
 
@@ -32,7 +32,7 @@ Activate resizing
 
     var draw = SVG('drawing');
 	var rect = draw.rect(100,100);
-    rect.select().resize();
+    rect.selectize().resize();
 
 Deactivate resizing
 
@@ -50,7 +50,7 @@ Keep element within constrained box
 			maxY: 300
 		}
 	};
-	rect.select().resize(opt)
+	rect.selectize().resize(opt)
 
 
 # Options
