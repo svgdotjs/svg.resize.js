@@ -62,4 +62,9 @@ Keep element within constrained box
 
 # Events
 
+- `resizing`: Fired when changes occur
 - `resizedone`: Fired when resizing is done
+
+# Known Issues
+
+- resize nested svgs does not work
