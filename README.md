@@ -62,4 +62,5 @@ Keep element within constrained box
 
 # Events
 
+- `resizing`: Fired when changes occur
 - `resizedone`: Fired when resizing is done
