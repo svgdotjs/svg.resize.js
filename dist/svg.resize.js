@@ -1,4 +1,4 @@
-/*! svg.resize.js - v1.3.0 - 2016-04-28
+/*! svg.resize.js - v1.3.0 - 2016-09-13
 * https://github.com/Fuzzyma/svg.resize.js
 * Copyright (c) 2016 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
@@ -309,6 +309,7 @@
                 };
         }
 
+        this.el.fire('resizestart', {dx: this.parameters.x, dy: this.parameters.y, event: event});
         // When resizing started, we have to register events for...
         // Touches.
         SVG.on(window, 'touchmove.resize', function(e) {
