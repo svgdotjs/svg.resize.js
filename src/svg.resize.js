@@ -306,6 +306,7 @@
                 };
         }
 
+        this.el.fire('resizestart');
         // When resizing started, we have to register events for...
         // Touches.
         SVG.on(window, 'touchmove.resize', function(e) {
