@@ -1,9 +1,7 @@
-/*! svg.resize.js - v1.3.0 - 2016-09-13
+/*! svg.resize.js - v1.4.0 - 2016-09-15
 * https://github.com/Fuzzyma/svg.resize.js
 * Copyright (c) 2016 Ulrich-Matthias Schäfer; Licensed MIT */
 ;(function () {
-
-
 
     function ResizeHandler(el) {
 

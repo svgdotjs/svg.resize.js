@@ -1,7 +1,5 @@
 ;(function () {
 
-
-
     function ResizeHandler(el) {
 
         el.remember('_resizeHandler', this);
