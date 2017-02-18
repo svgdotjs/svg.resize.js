@@ -320,6 +320,13 @@
         SVG.on(window, 'mouseup.resize', function () {
             _this.done();
         });
+        // Pointer.
+        SVG.on(window, 'pointermove.resize', function (e) {
+            _this.update(e || window.event);
+        });
+        SVG.on(window, 'pointerup.resize', function () {
+            _this.done();
+        });
 
     };
 
@@ -357,6 +364,8 @@
         SVG.off(window, 'mouseup.resize');
         SVG.off(window, 'touchmove.resize');
         SVG.off(window, 'touchend.resize');
+        SVG.off(window, 'pointermove.resize');
+        SVG.off(window, 'pointerend.resize');
         this.el.fire('resizedone');
     };
 
