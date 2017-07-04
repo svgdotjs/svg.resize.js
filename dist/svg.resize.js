@@ -1,6 +1,14 @@
-/*! svg.resize.js - v1.4.0 - 2016-09-15
-* https://github.com/Fuzzyma/svg.resize.js
-* Copyright (c) 2016 Ulrich-Matthias Schäfer; Licensed MIT */
+/*!
+* svg.resize.js - An extension for svg.js which allows to resize elements which are selected
+* @version 1.4.1
+* https://github.com/svgdotjs/svg.resize.js
+*
+* @copyright [object Object]
+* @license MIT
+*/;
+;(function() {
+"use strict";
+
 ;(function () {
 
     function ResizeHandler(el) {
@@ -443,3 +451,4 @@
     };
 
 }).call(this);
+}());

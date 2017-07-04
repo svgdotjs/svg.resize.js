@@ -1,11 +1,10 @@
 {
   "name": "svg.resize.js",
-  "version": "1.4.0",
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
   "authors": [
     "Ulrich-Matthias Schäfer"
   ],
-  "description": "An extension for svn.js which allows to resize elements which are selected",
+  "description": "An extension for svg.js which allows to resize elements which are selected",
   "main": [
     "./dist/svg.resize.js"
   ],
@@ -23,7 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "svg.js":"^2.0.2",
-    "svg.select.js":"^1.0.4"
+    "svg.js":"^2.2.5",
+    "svg.select.js":"^2.1.2"
   }
 }
