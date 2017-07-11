@@ -292,7 +292,7 @@
                     // We have to move the element to the center of the box first and change the rotation afterwards
                     // because rotation always works around a rotation-center, which is changed when moving the element
                     // We also set the new rotation center to the center of the box.
-                    this.el.center(this.parameters.box.cx, this.parameters.box.cy).rotate(this.parameters.rotation + angle - angle % this.options.snapToAngle, this.parameters.box.cx, this.parameters.box.cy);
+                    this.el.rotate(this.parameters.rotation + angle - angle % this.options.snapToAngle, this.parameters.box.cx, this.parameters.box.cy);
                 };
                 break;
 
