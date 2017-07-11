@@ -1,0 +1,38 @@
+{
+  "name": "svg.select.js",
+  "version": "2.1.2",
+  "homepage": "https://github.com/svgdotjs/svg.select.js",
+  "authors": [
+    "Ulrich-Matthias Schäfer"
+  ],
+  "description": "An extension for svg.js which allows to select elements with mouse",
+  "main": [
+    "./dist/svg.select.js",
+    "./dist/svg.select.css"
+  ],
+  "keywords": [
+    "svg.js",
+    "select",
+    "mouse"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "svg.js": "^2.2.5"
+  },
+  "_release": "2.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.1.2",
+    "commit": "fca324bb0e2ce4570316c71d4982525d5174e1ea"
+  },
+  "_source": "https://github.com/svgdotjs/svg.select.js.git",
+  "_target": "^2.1.2",
+  "_originalSource": "svg.select.js"
+}
