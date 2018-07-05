@@ -34,9 +34,9 @@
         // Extract a position from a mouse/touch event.
         // Returns { x: .., y: .. }
         return {
-            x: event.clientX || event.touches[0].pageX,
-            y: event.clientY || event.touches[0].pageY
-        };
+            x: event.clientX != null ? event.clientX : event.touches[0].clientX,
+            y: event.clientY != null ? event.clientY : event.touches[0].clientY
+        }
     };
 
     ResizeHandler.prototype.init = function (options) {
