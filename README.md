@@ -58,6 +58,7 @@ Keep element within constrained box
 - `snapToGrid`: Snaps the shape to a virtual grid while resizing (default `1`)
 - `snapToAngle`: Snaps to an angle when rotating (default `0.1`)
 - `constraint`: Keep element within constrained box (see usage above); The box snaps to the grid defined by `snapToGrid`.
+- `saveAspectRatio`: Save aspect ratio of the element while resizing with left-top, left-bottom, right-top, right-bottom points.
 
 
 # Events
