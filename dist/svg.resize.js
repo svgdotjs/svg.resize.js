@@ -1,6 +1,6 @@
 /*!
 * svg.resize.js - An extension for svg.js which allows to resize elements which are selected
-* @version 1.4.1
+* @version 1.4.2
 * https://github.com/svgdotjs/svg.resize.js
 *
 * @copyright [object Object]
@@ -156,6 +156,8 @@
                             return;
                         }
 
+                        snap = this.checkAspectRatio(snap);
+
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
                     }
                 };
@@ -172,6 +174,8 @@
                             this.el.attr("font-size", this.parameters.fontSize + snap[0]);
                             return;
                         }
+
+                        snap = this.checkAspectRatio(snap);
 
                         this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).size(this.parameters.box.width + snap[0], this.parameters.box.height - snap[1]);
                     }
@@ -190,6 +194,8 @@
                             return;
                         }
 
+                        snap = this.checkAspectRatio(snap);
+
                         this.el.move(this.parameters.box.x, this.parameters.box.y).size(this.parameters.box.width + snap[0], this.parameters.box.height + snap[1]);
                     }
                 };
@@ -206,6 +212,8 @@
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
                             return;
                         }
+
+                        snap = this.checkAspectRatio(snap);
 
                         this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).size(this.parameters.box.width - snap[0], this.parameters.box.height + snap[1]);
                     }
@@ -432,6 +440,29 @@
         return [diffX, diffY];
     };
 
+    ResizeHandler.prototype.checkAspectRatio = function (snap) {
+        if (!this.options.saveAspectRatio) {
+            return snap;
+        }
+
+        var updatedSnap = snap.slice();
+        var aspectRatio = this.parameters.box.width / this.parameters.box.height;
+        var newW = this.parameters.box.width + snap[0];
+        var newH = this.parameters.box.height - snap[1];
+        var newAspectRatio = newW / newH;
+
+        if (newAspectRatio < aspectRatio) {
+            // Height is too big. Adapt it
+            updatedSnap[1] = newW / aspectRatio - this.parameters.box.height;
+        } else if (newAspectRatio > aspectRatio) {
+            // Width is too big. Adapt it
+            updatedSnap[0] = this.parameters.box.width - newH * aspectRatio;
+        }
+
+        return updatedSnap;
+
+    };
+
     SVG.extend(SVG.Element, {
         // Resize element with mouse
         resize: function (options) {
@@ -445,9 +476,10 @@
     });
 
     SVG.Element.prototype.resize.defaults = {
-        snapToAngle: 0.1,    // Specifies the speed the rotation is happening when moving the mouse
-        snapToGrid: 1,       // Snaps to a grid of `snapToGrid` Pixels
-        constraint: {}       // keep element within constrained box
+        snapToAngle: 0.1,       // Specifies the speed the rotation is happening when moving the mouse
+        snapToGrid: 1,          // Snaps to a grid of `snapToGrid` Pixels
+        constraint: {},         // keep element within constrained box
+        saveAspectRatio: false  // Save aspect ratio when resizing using lt, rt, rb or lb points
     };
 
 }).call(this);
