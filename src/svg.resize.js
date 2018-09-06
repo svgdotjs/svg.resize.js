@@ -382,8 +382,14 @@
             // We check if the flag is set and if not we set a default-value (both bits set - which means upper-left-edge)
             flag = flag == null ? 1 | 1 << 1 : flag;
             temp = [(this.parameters.box.x + diffX + (flag & 1 ? 0 : this.parameters.box.width)) % this.options.snapToGrid, (this.parameters.box.y + diffY + (flag & (1 << 1) ? 0 : this.parameters.box.height)) % this.options.snapToGrid];
-        }
 
+            if(diffX < 0) {
+                temp[0] -= this.options.snapToGrid;
+            }
+            if(diffY < 0) {
+                temp[1] -= this.options.snapToGrid;
+            }
+        }
 
         diffX -= (Math.abs(temp[0]) < this.options.snapToGrid / 2 ?
                   temp[0] :
