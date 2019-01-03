@@ -22,7 +22,7 @@
       <code>
         new SVG('polygon_normal').size('100%', '100%')
             .polygon('350,50 283,250 450,122 250,122 416,250')
-            .select().select({deepSelect:true})
+            .selectize().selectize({deepSelect:true})
             .resize();
       </code>
       <div id="polygon_normal"></div>
@@ -33,7 +33,7 @@
       <code>
         new SVG('polygon_snap').size('100%', '100%')
             .polygon('350,50 283,250 450,122 250,122 416,250')
-            .select().select({deepSelect:true})
+            .selectize().selectize({deepSelect:true})
             .resize({snapToGrid:20, snapToAngle:15});
       </code>
       <div id="polygon_snap"></div>
@@ -44,7 +44,7 @@
       <code>
         var poly = new SVG('polygon_ctrl').size('100%', '100%')
             .polygon('350,50 283,250 450,122 250,122 416,250')
-            .select().select({deepSelect:true})
+            .selectize().selectize({deepSelect:true})
             .resize();
  
         window.addEventListener('keydown', function(e){
