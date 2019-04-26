@@ -1,6 +1,6 @@
 {
   "name": "svg.resize.js",
-  "version": "1.4.3",
+  "version": "2.0.0",
   "description": "An extension for svg.js which allows to resize elements which are selected",
   "keywords": [
     "svg.js",
@@ -18,10 +18,18 @@
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
   "main": "dist/svg.resize.js",
   "files": [
-    "dist/"
+    "/dist",
+    "/src",
+    "/svg.select.js.d.ts"
   ],
   "scripts": {
-    "build": "gulp"
+    "build": "npm run fix && npm run rollup",
+    "fix": "npx eslint ./src --fix",
+    "lint": "npx eslint ./src",
+    "rollup": "npx rollup -c .config/rollup.config.js",
+    "zip": "zip -j dist/svg.draggable.js.zip -- LICENSE README.md dist/svg.draggable.js dist/svg.draggable.js.map dist/svg.draggable.min.js dist/svg.draggable.min.js.map",
+    "prepublishOnly": "rm -rf ./dist && npm run build",
+    "postpublish": "npm run zip"
   },
   "repository": {
     "type": "git",
@@ -31,19 +39,32 @@
     "node": ">= 0.8.0"
   },
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-header": "^1.8.12",
-    "gulp-iife": "^0.3.0",
-    "gulp-rename": "^1.3.0",
-    "gulp-standard": "^10.1.2",
-    "gulp-trimlines": "^1.0.1",
-    "gulp-uglify": "^2.1.2",
-    "gulp-wrap-iife": "0.0.1",
-    "natives": "1.1.3"
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-external-helpers": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/runtime": "^7.2.0",
+    "@babel/runtime-corejs2": "^7.2.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.12.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "rollup": "^1.1.0",
+    "rollup-plugin-babel": "^4.3.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-filesize": "^6.0.0",
+    "rollup-plugin-multi-entry": "^2.1.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-terser": "^4.0.2",
+    "rollup-plugin-uglify": "^6.0.1",
+    "rollup-plugin-uglify-es": "0.0.1"
   },
   "dependencies": {
-    "svg.js": "^2.6.5",
-    "svg.select.js": "^2.1.2"
+    "svg.js": "^3.0.12",
+    "svg.select.js": "^3.0.0"
   }
 }
