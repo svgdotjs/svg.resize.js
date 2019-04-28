@@ -49,7 +49,7 @@ const config = (node, min) => ({
       : min ? './dist/svg.resize.min.js'
         : './dist/svg.resize.js',
     format: node ? 'cjs' : 'iife',
-    // name: 'SVG.SelectHandler',
+    name: 'SVG.ResizeHandler',
     sourcemap: true,
     banner: headerLong,
     // remove Object.freeze

@@ -64,7 +64,7 @@
     "rollup-plugin-uglify-es": "0.0.1"
   },
   "dependencies": {
-    "svg.js": "^3.0.12",
-    "svg.select.js": "svgdotjs/svg.select.js#svgjs-v3-oldapi"
+    "@svgdotjs/svg.js": "^3.0.12",
+    "svg.select.js": "svgdotjs/svg.select.js#svgjs-v3"
   }
 }

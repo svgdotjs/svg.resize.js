@@ -129,7 +129,7 @@ extend(Element, {
     var resizeHandler = this.remember('_resizeHandler')
 
     if (!resizeHandler) {
-      if (enabled instanceof ResizeHandler) {
+      if (enabled.prototype instanceof ResizeHandler) {
         /* eslint new-cap: ["error", { "newIsCap": false }] */
         resizeHandler = new enabled(this)
         enabled = true
@@ -145,3 +145,5 @@ extend(Element, {
     return this
   }
 })
+
+export default ResizeHandler
