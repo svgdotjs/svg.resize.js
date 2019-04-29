@@ -11,7 +11,7 @@ class ResizeHandler {
   constructor (el) {
     this.el = el
     this.lastCoordinates = null
-    this.events = []
+    this.eventType = ''
     this.handleResize = this.handleResize.bind(this)
     this.resize = this.resize.bind(this)
     this.endResize = this.endResize.bind(this)
@@ -41,6 +41,7 @@ class ResizeHandler {
 
   // This is called when a user clicks on one of the resize points
   handleResize (e) {
+    this.eventType = e.type
     const { x: startX, y: startY, event } = e.detail
     const isMouse = !event.type.indexOf('mouse')
 
@@ -71,28 +72,6 @@ class ResizeHandler {
         return
       }
 
-      switch (e.type) {
-      case 'lb':
-        this.events.push('l')
-        this.events.push('b')
-        break
-      case 'lt':
-        this.events.push('l')
-        this.events.push('t')
-        break
-      case 'rb':
-        this.events.push('r')
-        this.events.push('b')
-        break
-      case 'rt':
-        this.events.push('r')
-        this.events.push('t')
-        break
-      default:
-        this.events.push(e.type)
-        break
-      }
-
       // We consider the resize done, when a touch is canceled, too
       const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.resize'
       const eventEnd = (isMouse ? 'mouseup' : 'touchcancel.resize touchend') + '.resize'
@@ -115,22 +94,22 @@ class ResizeHandler {
 
     const box = new Box(this.box)
 
-    if (this.events.includes('l')) {
+    if (this.eventType.includes('l')) {
       box.x = Math.min(x, this.box.x2)
       box.x2 = Math.max(x, this.box.x2)
     }
 
-    if (this.events.includes('r')) {
+    if (this.eventType.includes('r')) {
       box.x = Math.min(x2, this.box.x)
       box.x2 = Math.max(x2, this.box.x)
     }
 
-    if (this.events.includes('t')) {
+    if (this.eventType.includes('t')) {
       box.y = Math.min(y, this.box.y2)
       box.y2 = Math.max(y, this.box.y2)
     }
 
-    if (this.events.includes('b')) {
+    if (this.eventType.includes('b')) {
       box.y = Math.min(y2, this.box.y)
       box.y2 = Math.max(y2, this.box.y)
     }
@@ -147,7 +126,7 @@ class ResizeHandler {
 
   endResize (ev) {
     this.resize(ev)
-    this.events = []
+    this.eventType = ''
     off(window, 'mousemove.resize touchmove.resize', this.resize)
     off(window, 'mouseup.resize touchend.resize', this.endResize)
   }
@@ -171,7 +150,7 @@ class ResizeHandler {
     this.el.rotate(angle)
   }
   endRotate (ev) {
-    this.events = []
+    this.eventType = ''
     off(window, 'mousemove.rotate touchmove.rotate', this.rotate)
     off(window, 'mouseup.rotate touchend.rotate', this.endRotate)
   }
