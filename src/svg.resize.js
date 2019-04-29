@@ -49,13 +49,13 @@ class ResizeHandler {
       return
     }
 
-    this.box = this.el.bbox()
-    this.startPoint = this.el.point(startX, startY)
-
     // Fire beforedrag event
     if (this.el.dispatch('beforeresize', { event: e, handler: this }).defaultPrevented) {
       return
     }
+
+    this.box = this.el.bbox()
+    this.startPoint = this.el.point(startX, startY)
 
     // We consider the resize done, when a touch is canceled, too
     const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.resize'
@@ -107,7 +107,7 @@ class ResizeHandler {
     box.width = box.x2 - box.x
     box.height = box.y2 - box.y
 
-    if (this.el.dispatch('resize', { box: new Box(box), event: e, handler: this }).defaultPrevented) {
+    if (this.el.dispatch('resize', { box: new Box(box), angle: 0, shear: 0, eventType: this.eventType, event: e, handler: this }).defaultPrevented) {
       return
     }
 
@@ -116,8 +116,8 @@ class ResizeHandler {
 
   rotate (e) {
     const endPoint = this.el.point(getCoordsFromEvent(e))
-    const cx = this.el.cx()
-    const cy = this.el.cy()
+    const cx = this.box.cx
+    const cy = this.box.cy
     const dx1 = this.startPoint.x - cx
     const dy1 = this.startPoint.y - cy
     const dx2 = endPoint.x - cx
@@ -130,7 +130,9 @@ class ResizeHandler {
     if (endPoint.x < this.startPoint.x) {
       angle = -angle
     }
-    if (this.el.dispatch('rotate', { angle: angle, event: e, handler: this }).defaultPrevented) {
+
+    this.angle = angle
+    if (this.el.dispatch('resize', { box: this.startBox, angle: angle, shear: 0, eventType: this.eventType, event: e, handler: this }).defaultPrevented) {
       return
     }
 
