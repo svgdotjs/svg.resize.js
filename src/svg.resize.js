@@ -15,6 +15,8 @@ class ResizeHandler {
     this.handleResize = this.handleResize.bind(this)
     this.resize = this.resize.bind(this)
     this.endResize = this.endResize.bind(this)
+    this.rotate = this.rotate.bind(this)
+    this.endRotate = this.endRotate.bind(this)
   }
 
   active (value) {
@@ -39,10 +41,6 @@ class ResizeHandler {
 
   // This is called when a user clicks on one of the resize points
   handleResize (e) {
-    if (e.type === 'rot' || e.type === 'shear') {
-      return this['handle' + e.type](e)
-    }
-
     const { x: startX, y: startY, event } = e.detail
     const isMouse = !event.type.indexOf('mouse')
 
@@ -51,22 +49,58 @@ class ResizeHandler {
       return
     }
 
-    // Fire beforedrag event
-    if (this.el.dispatch('beforeresize', { event: e, handler: this }).defaultPrevented) {
-      return
-    }
-
-    this.events.push(e.type)
     this.box = this.el.bbox()
     this.startPoint = this.el.point(startX, startY)
 
-    // We consider the resize done, when a touch is canceled, too
-    const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.resize'
-    const eventEnd = (isMouse ? 'mouseup' : 'touchcancel.resize touchend') + '.resize'
+    if (e.type === 'rot') { // rotate
+      if (this.el.dispatch('beforerotate', { event: e, handler: this }).defaultPrevented) {
+        return
+      }
+      // We consider the resize done, when a touch is canceled, too
+      const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.rotate'
+      const eventEnd = (isMouse ? 'mouseup' : 'touchcancel.rotate touchend') + '.rotate'
 
-    // Bind resize and end events to window
-    on(window, eventMove, this.resize)
-    on(window, eventEnd, this.endResize)
+      // Bind resize and end events to window
+      on(window, eventMove, this.rotate)
+      on(window, eventEnd, this.endRotate)
+    } else if (e.type === 'shear') { // shear
+
+    } else { // resize
+    // Fire beforedrag event
+      if (this.el.dispatch('beforeresize', { event: e, handler: this }).defaultPrevented) {
+        return
+      }
+
+      switch (e.type) {
+      case 'lb':
+        this.events.push('l')
+        this.events.push('b')
+        break
+      case 'lt':
+        this.events.push('l')
+        this.events.push('t')
+        break
+      case 'rb':
+        this.events.push('r')
+        this.events.push('b')
+        break
+      case 'rt':
+        this.events.push('r')
+        this.events.push('t')
+        break
+      default:
+        this.events.push(e.type)
+        break
+      }
+
+      // We consider the resize done, when a touch is canceled, too
+      const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.resize'
+      const eventEnd = (isMouse ? 'mouseup' : 'touchcancel.resize touchend') + '.resize'
+
+      // Bind resize and end events to window
+      on(window, eventMove, this.resize)
+      on(window, eventEnd, this.endResize)
+    }
   }
 
   resize (e) {
@@ -117,7 +151,30 @@ class ResizeHandler {
     off(window, 'mousemove.resize touchmove.resize', this.resize)
     off(window, 'mouseup.resize touchend.resize', this.endResize)
   }
-
+  rotate (e) {
+    const endPoint = this.el.point(getCoordsFromEvent(e))
+    const cx = this.el.cx()
+    const cy = this.el.cy()
+    const dx1 = this.startPoint.x - cx
+    const dy1 = this.startPoint.y - cy
+    const dx2 = endPoint.x - cx
+    const dy2 = endPoint.y - cy
+    const c = Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2)
+    if (c === 0) return 0
+    let angle = Math.acos((dx1 * dx2 + dy1 * dy2) / c) / Math.PI * 180
+    if (endPoint.x < this.startPoint.x) {
+      angle = -angle
+    }
+    if (this.el.dispatch('rotate', { angle: angle, event: e, handler: this }).defaultPrevented) {
+      return
+    }
+    this.el.rotate(angle)
+  }
+  endRotate (ev) {
+    this.events = []
+    off(window, 'mousemove.rotate touchmove.rotate', this.rotate)
+    off(window, 'mouseup.rotate touchend.rotate', this.endRotate)
+  }
   snapToGrid (box, xGrid, yGrid = xGrid) {
     // TODO: Snap helper function
   }
