@@ -138,21 +138,20 @@ class ResizeHandler {
 
     this.el.rotate(angle)
   }
+
   shear (e) {
     // TODO: Add shear
   }
+
   endResize (ev) {
     // Unbind resize and end events to window
-    if (this.eventType === 'rot') { // rotate
-      off(window, 'mousemove.resize touchmove.resize', this.rotate)
-    } else if (this.eventType === 'shear') { // shear
-      off(window, 'mousemove.resize touchmove.resize', this.shear)
-    } else { // resize
+    if (this.eventType !== 'rot' || this.eventType === 'shear') {
       this.resize(ev)
-      off(window, 'mousemove.resize touchmove.resize', this.resize)
     }
+
     this.eventType = ''
-    off(window, 'mouseup.resize touchend.resize', this.endResize)
+    off(window, 'mousemove.resize touchmove.resize')
+    off(window, 'mouseup.resize touchend.resize')
   }
 
   snapToGrid (box, xGrid, yGrid = xGrid) {
