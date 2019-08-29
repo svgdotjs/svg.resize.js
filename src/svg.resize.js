@@ -103,6 +103,8 @@
             rotation: this.el.transform().rotation  // The current rotation of the element
         };
 
+        this.resizeLimits = this.options.resizeLimits || this.resize.defaults.resizeLimits;
+
         // Add font-size parameter if the element type is text
         if (this.el.type === "text") {
             this.parameters.fontSize = this.el.attr()["font-size"];
@@ -131,7 +133,7 @@
                     var snap = this.snapToGrid(diffX, diffY);
 
                     // Now we check if the new height and width still valid (> 0)
-                    if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
+                    if (this.parameters.box.width - snap[0] > this.resizeLimits.width && this.parameters.box.height - snap[1] > this.resizeLimits.height) {
                         // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
 
                         /*
@@ -157,7 +159,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
-                    if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
+                    if (this.parameters.box.width + snap[0] > this.resizeLimits.width && this.parameters.box.height - snap[1] > this.resizeLimits.height) {
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize + snap[0]);
@@ -176,7 +178,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                    if (this.parameters.box.width + snap[0] > this.resizeLimits.width && this.parameters.box.height + snap[1] > this.resizeLimits.height) {
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize + snap[0]);
@@ -195,7 +197,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
-                    if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
+                    if (this.parameters.box.width - snap[0] > this.resizeLimits.width && this.parameters.box.height + snap[1] > this.resizeLimits.height) {
                         if (this.parameters.type === "text") {
                             this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
                             this.el.attr("font-size", this.parameters.fontSize - snap[0]);
@@ -214,7 +216,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
-                    if (this.parameters.box.height - snap[1] > 0) {
+                    if (this.parameters.box.height - snap[1] > this.resizeLimits.height) {
                         // Disable the font-resizing if it is not from the corner of bounding-box
                         if (this.parameters.type === "text") {
                             return;
@@ -230,7 +232,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.width + snap[0] > 0) {
+                    if (this.parameters.box.width + snap[0] > this.resizeLimits.width) {
                         if (this.parameters.type === "text") {
                             return;
                         }
@@ -245,7 +247,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.height + snap[1] > 0) {
+                    if (this.parameters.box.height + snap[1] > this.resizeLimits.height) {
                         if (this.parameters.type === "text") {
                             return;
                         }
@@ -260,7 +262,7 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
-                    if (this.parameters.box.width - snap[0] > 0) {
+                    if (this.parameters.box.width - snap[0] > this.resizeLimits.width) {
                         if (this.parameters.type === "text") {
                             return;
                         }
@@ -475,6 +477,7 @@
         snapToAngle: 0.1,       // Specifies the speed the rotation is happening when moving the mouse
         snapToGrid: 1,          // Snaps to a grid of `snapToGrid` Pixels
         constraint: {},         // keep element within constrained box
+        resizeLimits: { width: 0, height: 0 }, // rect limit size on resize
         saveAspectRatio: false  // Save aspect ratio when resizing using lt, rt, rb or lb points
     };
 
