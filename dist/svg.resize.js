@@ -503,7 +503,7 @@
         snapToAngle: 0.1,       // Specifies the speed the rotation is happening when moving the mouse
         snapToGrid: 1,          // Snaps to a grid of `snapToGrid` Pixels
         constraint: {},         // keep element within constrained box
-        resizeLimits: { width: 1, height: 1 }, // rect limit size on resize
+        resizeLimits: { width: 0, height: 0 }, // rect limit size on resize
         saveAspectRatio: false  // Save aspect ratio when resizing using lt, rt, rb or lb points
     };
 
