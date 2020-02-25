@@ -52,12 +52,24 @@ Keep element within constrained box
 	};
 	rect.selectize().resize(opt)
 
+Set minimum size
+
+	var draw = SVG('drawing');
+	var rect = draw.rect(100, 100);
+	var opt = {
+		resizeLimits: {
+			width: 20,
+			height: 20,
+		}
+	};
+	rect.selectize().resize(opt)
 
 # Options
 
 - `snapToGrid`: Snaps the shape to a virtual grid while resizing (default `1`)
 - `snapToAngle`: Snaps to an angle when rotating (default `0.1`)
 - `constraint`: Keep element within constrained box (see usage above); The box snaps to the grid defined by `snapToGrid`.
+- `resizeLimits`: Keep element with minimum size (default `{ width: 0, height: 0 }`)
 - `saveAspectRatio`: Save aspect ratio of the element while resizing with left-top, left-bottom, right-top, right-bottom points.
 
 

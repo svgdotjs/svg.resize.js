@@ -114,6 +114,8 @@
             rotation: this.el.transform().rotation  // The current rotation of the element
         };
 
+        this.resizeLimits = this.options.resizeLimits || this.resize.defaults.resizeLimits;
+
         // Add font-size parameter if the element type is text
         if (this.el.type === "text") {
             this.parameters.fontSize = this.el.attr()["font-size"];
@@ -130,6 +132,83 @@
             this.parameters.pointCoords = [array[event.detail.i][0], array[event.detail.i][1]];
         }
 
+        this._resizeLeft = function (snap, resizeFont, checkAspectRatio, checkAspectRatioReverse, updateOnlyChanges) {
+            if (this.parameters.box.width - snap[0] >= this.resizeLimits.width) {
+                if (checkAspectRatio) {
+                    snap = this.checkAspectRatio(snap, checkAspectRatioReverse);
+                }
+
+                if (this.parameters.type === "text") {
+                    if (resizeFont) {
+                        this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                        this.el.attr("font-size", this.parameters.fontSize - snap[0]);
+                    }
+                    return;
+                }
+
+                this.el.width(this.parameters.box.width - snap[0]);
+
+                if (updateOnlyChanges) {
+                    this.el.x(this.parameters.box.x + snap[0]);
+                } else {
+                    this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
+                }
+            }
+        };
+
+        this._resizeRight = function (snap, resizeFont, checkAspectRatio, checkAspectRatioReverse) {
+            if (this.parameters.box.width + snap[0] >= this.resizeLimits.width) {
+                if (checkAspectRatio) {
+                    snap = this.checkAspectRatio(snap, checkAspectRatioReverse);
+                }
+
+                if (this.parameters.type === "text") {
+                    if (resizeFont) {
+                        this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
+                        this.el.attr("font-size", this.parameters.fontSize + snap[0]);
+                    }
+                    return;
+                }
+
+                this.el.x(this.parameters.box.x).width(this.parameters.box.width + snap[0]);
+            }
+        };
+
+        this._resizeTop = function (snap, checkAspectRatio, checkAspectRatioReverse, updateOnlyChanges) {
+            if (this.parameters.box.height - snap[1] >= this.resizeLimits.height) {
+                if (checkAspectRatio) {
+                    snap = this.checkAspectRatio(snap, checkAspectRatioReverse);
+                }
+
+                // Disable the font-resizing if it is not from the corner of bounding-box
+                if (this.parameters.type === "text") {
+                    return;
+                }
+
+                this.el.height(this.parameters.box.height - snap[1]);
+
+                if (updateOnlyChanges) {
+                    this.el.y(this.parameters.box.y + snap[1])
+                } else {
+                    this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]);
+                }
+            }
+        };
+
+        this._resizeBottom = function (snap, checkAspectRatio, checkAspectRatioReverse) {
+            if (this.parameters.box.height + snap[1] >= this.resizeLimits.height) {
+                if (checkAspectRatio) {
+                    snap = this.checkAspectRatio(snap, checkAspectRatioReverse);
+                }
+
+                if (this.parameters.type === "text") {
+                    return;
+                }
+
+                this.el.y(this.parameters.box.y).height(this.parameters.box.height + snap[1]);
+            }
+        };
+
         // Lets check which edge of the bounding-box was clicked and resize the this.el according to this
         switch (event.type) {
 
@@ -141,25 +220,8 @@
                     // First we snap the edge to the given grid (snapping to 1px grid is normal resizing)
                     var snap = this.snapToGrid(diffX, diffY);
 
-                    // Now we check if the new height and width still valid (> 0)
-                    if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
-                        // ...if valid, we resize the this.el (which can include moving because the coord-system starts at the left-top and this edge is moving sometimes when resized)
-
-                        /*
-                         * but first check if the element is text box, so we can change the font size instead of
-                         * the width and height
-                         */
-
-                        if (this.parameters.type === "text") {
-                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
-                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
-                            return;
-                        }
-
-                        snap = this.checkAspectRatio(snap);
-
-                        this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y + snap[1]).size(this.parameters.box.width - snap[0], this.parameters.box.height - snap[1]);
-                    }
+                    this._resizeTop(snap, true, false, true);
+                    this._resizeLeft(snap, true, true, false, true);
                 };
                 break;
 
@@ -168,17 +230,9 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
-                    if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height - snap[1] > 0) {
-                        if (this.parameters.type === "text") {
-                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
-                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
-                            return;
-                        }
 
-                        snap = this.checkAspectRatio(snap, true);
-
-                        this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).size(this.parameters.box.width + snap[0], this.parameters.box.height - snap[1]);
-                    }
+                    this._resizeTop(snap, true, true, true);
+                    this._resizeRight(snap, true, true, true);
                 };
                 break;
 
@@ -187,17 +241,9 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.width + snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
-                        if (this.parameters.type === "text") {
-                            this.el.move(this.parameters.box.x - snap[0], this.parameters.box.y);
-                            this.el.attr("font-size", this.parameters.fontSize + snap[0]);
-                            return;
-                        }
 
-                        snap = this.checkAspectRatio(snap);
-
-                        this.el.move(this.parameters.box.x, this.parameters.box.y).size(this.parameters.box.width + snap[0], this.parameters.box.height + snap[1]);
-                    }
+                    this._resizeBottom(snap, true);
+                    this._resizeRight(snap, true, true);
                 };
                 break;
 
@@ -206,17 +252,9 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
-                    if (this.parameters.box.width - snap[0] > 0 && this.parameters.box.height + snap[1] > 0) {
-                        if (this.parameters.type === "text") {
-                            this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y);
-                            this.el.attr("font-size", this.parameters.fontSize - snap[0]);
-                            return;
-                        }
 
-                        snap = this.checkAspectRatio(snap, true);
-
-                        this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).size(this.parameters.box.width - snap[0], this.parameters.box.height + snap[1]);
-                    }
+                    this._resizeBottom(snap, true, true);
+                    this._resizeLeft(snap, true, true, true, true);
                 };
                 break;
 
@@ -225,14 +263,8 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1 << 1);
-                    if (this.parameters.box.height - snap[1] > 0) {
-                        // Disable the font-resizing if it is not from the corner of bounding-box
-                        if (this.parameters.type === "text") {
-                            return;
-                        }
 
-                        this.el.move(this.parameters.box.x, this.parameters.box.y + snap[1]).height(this.parameters.box.height - snap[1]);
-                    }
+                    this._resizeTop(snap);
                 };
                 break;
 
@@ -241,13 +273,8 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.width + snap[0] > 0) {
-                        if (this.parameters.type === "text") {
-                            return;
-                        }
 
-                        this.el.move(this.parameters.box.x, this.parameters.box.y).width(this.parameters.box.width + snap[0]);
-                    }
+                    this._resizeRight(snap);
                 };
                 break;
 
@@ -256,13 +283,8 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 0);
-                    if (this.parameters.box.height + snap[1] > 0) {
-                        if (this.parameters.type === "text") {
-                            return;
-                        }
 
-                        this.el.move(this.parameters.box.x, this.parameters.box.y).height(this.parameters.box.height + snap[1]);
-                    }
+                    this._resizeBottom(snap);
                 };
                 break;
 
@@ -271,13 +293,8 @@
                 // s.a.
                 this.calc = function (diffX, diffY) {
                     var snap = this.snapToGrid(diffX, diffY, 1);
-                    if (this.parameters.box.width - snap[0] > 0) {
-                        if (this.parameters.type === "text") {
-                            return;
-                        }
 
-                        this.el.move(this.parameters.box.x + snap[0], this.parameters.box.y).width(this.parameters.box.width - snap[0]);
-                    }
+                    this._resizeLeft(snap);
                 };
                 break;
 
@@ -486,6 +503,7 @@
         snapToAngle: 0.1,       // Specifies the speed the rotation is happening when moving the mouse
         snapToGrid: 1,          // Snaps to a grid of `snapToGrid` Pixels
         constraint: {},         // keep element within constrained box
+        resizeLimits: { width: 0, height: 0 }, // rect limit size on resize
         saveAspectRatio: false  // Save aspect ratio when resizing using lt, rt, rb or lb points
     };
 
