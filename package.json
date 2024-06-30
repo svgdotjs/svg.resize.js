@@ -1,5 +1,5 @@
 {
-  "name": "svg.resize.js",
+  "name": "@svgdotjs/svg.resize.js",
   "version": "2.0.0",
   "description": "An extension for svg.js which allows to resize elements which are selected",
   "type": "module",
@@ -14,16 +14,20 @@
     "name": "Ulrich-Matthias Schäfer"
   },
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
-  "main": "dist/svg.resize.js",
+  "main": "dist/svg.resize.umd.js",
+  "unpkg": "dist/svg.resize.iife.js",
+  "jsdelivr": "dist/svg.resize.iife.js",
+  "browser": "src/svg.resize.js",
+  "module": "src/svg.resize.js",
   "files": [
     "/dist",
     "/src",
-    "/svg.select.js.d.ts"
+    "/svg.resize.js.d.ts"
   ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && prettier --write . && eslint ./src && vite build",
-    "zip": "zip -j dist/svg.select.js.zip -- LICENSE README.md dist/svg.resize.iife.js  dist/svg.resize.iife.js.map  dist/svg.resize.js  dist/svg.resize.js.map  dist/svg.resize.umd.cjs  dist/svg.resize.umd.cjs.map",
+    "zip": "zip -j dist/svg.resize.js.zip -- LICENSE README.md dist/svg.resize.iife.js  dist/svg.resize.iife.js.map  dist/svg.resize.js  dist/svg.resize.js.map  dist/svg.resize.umd.cjs  dist/svg.resize.umd.cjs.map",
     "prepublishOnly": "rm -rf ./dist && npm run build",
     "postpublish": "npm run zip"
   },
