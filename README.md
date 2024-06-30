@@ -71,3 +71,17 @@ rect.on('resize', (event) => {
   console.log(event.detail)
 })
 ```
+
+# Contributing
+
+```bash
+git clone https://github.com/svgdotjs/svg.resize.js.git
+cd svg.resize.js
+npm install
+npm run dev
+```
+
+# Migration from svg.js v2
+
+- The option naming changed a bit. Please double check
+- The former events were removed. The resize event now serves the same purpose
