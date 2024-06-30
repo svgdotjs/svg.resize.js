@@ -2,6 +2,7 @@
   "name": "svg.resize.js",
   "version": "2.0.0",
   "description": "An extension for svg.js which allows to resize elements which are selected",
+  "type": "module",
   "keywords": [
     "svg.js",
     "resize",
@@ -12,9 +13,6 @@
   "author": {
     "name": "Ulrich-Matthias Schäfer"
   },
-  "contributors": {
-    "name": "Ulrich-Matthias Schäfer"
-  },
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
   "main": "dist/svg.resize.js",
   "files": [
@@ -23,11 +21,9 @@
     "/svg.select.js.d.ts"
   ],
   "scripts": {
-    "build": "npm run fix && npm run rollup",
-    "fix": "npx eslint ./src --fix",
-    "lint": "npx eslint ./src",
-    "rollup": "npx rollup -c .config/rollup.config.js",
-    "zip": "zip -j dist/svg.draggable.js.zip -- LICENSE README.md dist/svg.draggable.js dist/svg.draggable.js.map dist/svg.draggable.min.js dist/svg.draggable.min.js.map",
+    "dev": "vite",
+    "build": "tsc && prettier --write . && eslint ./src && vite build",
+    "zip": "zip -j dist/svg.select.js.zip -- LICENSE README.md dist/svg.resize.iife.js  dist/svg.resize.iife.js.map  dist/svg.resize.js  dist/svg.resize.js.map  dist/svg.resize.umd.cjs  dist/svg.resize.umd.cjs.map",
     "prepublishOnly": "rm -rf ./dist && npm run build",
     "postpublish": "npm run zip"
   },
@@ -39,32 +35,17 @@
     "node": ">= 0.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-external-helpers": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/polyfill": "^7.2.5",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/runtime": "^7.2.0",
-    "@babel/runtime-corejs2": "^7.2.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.1",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "rollup": "^1.1.0",
-    "rollup-plugin-babel": "^4.3.1",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-filesize": "^6.0.0",
-    "rollup-plugin-multi-entry": "^2.1.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-terser": "^4.0.2",
-    "rollup-plugin-uglify": "^6.0.1",
-    "rollup-plugin-uglify-es": "0.0.1"
+    "@types/node": "^20.14.7",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "eslint-plugin-import-x": "^0.5.2",
+    "prettier": "^3.3.2",
+    "terser": "^5.31.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "eslint": "^9.6.0"
   },
-  "dependencies": {
-    "@svgdotjs/svg.js": "^3.0.12",
-    "svg.select.js": "svgdotjs/svg.select.js#svgjs-v3"
+  "peerDependencies": {
+    "@svgdotjs/svg.js": "^3.2.4",
+    "@svgdotjs/svg.select.js": "svgdotjs/svg.select.js"
   }
 }

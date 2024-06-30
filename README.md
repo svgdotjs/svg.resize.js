@@ -1,5 +1,4 @@
-svg.resize.js
-=============
+# svg.resize.js
 
 An extension of [svg.js](https://github.com/svgdotjs/svg.js) which allows to resize elements which are selected with [svg.select.js](https://github.com/svgdotjs/svg.select.js)
 
@@ -9,63 +8,66 @@ For a demo see http://svgdotjs.github.io/svg.resize.js/
 
 # Get Started
 
-- Install `svg.resize.js` using bower:
+Install `svg.js`, `svg.select.js` and `svg.resize.js` using npm:
 
-		bower install svg.resize.js
+```bash
+npm i @svgdotjs/svg.js @svgdotjs/svg.select.js @svgdotjs/svg.resize.js
+```
 
-- Include the script after svg.js and svg.select.js into your page
+Or get it from a cnd:
 
-		<script src="svg.js"></script>
-		<script src="svg.select.js"></script>
-		<script src="svg.resize.js"></script>
+```html
+<script src="https://unpkg.com/@svgdotjs/svg.js"></script>
+<script src="https://unpkg.com/@svgdotjs/svg.select.js"></script>
+<script src="https://unpkg.com/@svgdotjs/svg.resize.js"></script>
+```
 
-- Select a rectangle and make it resizeable:
+Select and resize a rectangle using this simple piece of code:
 
-		<div id="myDrawing"></div>
-
-		var drawing = new SVG('myDrawing').size(500, 500);
-		drawing.rect(50,50).selectize().resize()
+```ts
+var canvas = new SVG().addTo('body').size(500, 500)
+canvas.rect(50, 50).fill('red').select().resize()
+```
 
 # Usage
 
 Activate resizing
 
-    var draw = SVG('drawing');
-	var rect = draw.rect(100,100);
-    rect.selectize().resize();
+```ts
+rect.select().resize()
+```
 
 Deactivate resizing
 
-	rect.resize('stop');
+```ts
+rect.resize(false)
+```
 
-Keep element within constrained box
+Preserve aspect ratio, resize around center and snap to grid:
 
-	var draw = SVG('drawing');
-	var rect = draw.rect(100, 100);
-	var opt = {
-		constraint: {
-			minX: 0,
-			minY: 0,
-			maxX: 200,
-			maxY: 300
-		}
-	};
-	rect.selectize().resize(opt)
-
+```ts
+rect.resize({ preserveAspectRatio: true, aroundCenter: true, grid: 10, degree: 0.1 })
+```
 
 # Options
 
-- `snapToGrid`: Snaps the shape to a virtual grid while resizing (default `1`)
-- `snapToAngle`: Snaps to an angle when rotating (default `0.1`)
-- `constraint`: Keep element within constrained box (see usage above); The box snaps to the grid defined by `snapToGrid`.
-- `saveAspectRatio`: Save aspect ratio of the element while resizing with left-top, left-bottom, right-top, right-bottom points.
-
+- `preserveAspectRatio`: Preserve the aspect ratio of the element while resizing
+- `aroundCenter`: Resize around the center of the element
+- `grid`: Snaps the shape to a virtual grid while resizing
+- `degree`: Snaps to an angle when rotating
 
 # Events
 
-- `resizing`: Fired when changes occur
-- `resizedone`: Fired when resizing is done
+While resizing, a `resize` event is fired. It contains the following properties (in `event.detail`):
 
-# Known Issues
+- `box`: The resulting bounding box after the resize operation
+- `angle`: The resulting rotation angle after the resize operation
+- `eventType`: The type of resize operation (the event fired by the select plugin)
+- `event`: The original event
+- `handler`: The resize handler
 
-- resize nested svgs does not work
+```ts
+rect.on('resize', (event) => {
+  console.log(event.detail)
+})
+```
