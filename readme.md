@@ -1,4 +1,12 @@
-# Get Started
+# svg.resize.js
+
+An extension of [svg.js](https://github.com/svgdotjs/svg.js) which allows to resize elements with mouse
+
+## Demo
+
+For a demo see http://svgjs.dev/svg.resize.js/
+
+## Get Started
 
 Install `svg.js`, `svg.select.js` and `svg.resize.js` using npm:
 
@@ -21,7 +29,7 @@ var canvas = new SVG().addTo("body").size(500, 500);
 canvas.rect(50, 50).fill("red").select().resize();
 ```
 
-# Usage
+## Usage
 
 Activate resizing
 
@@ -46,14 +54,14 @@ rect.resize({
 });
 ```
 
-# Options
+## Options
 
 - `preserveAspectRatio`: Preserve the aspect ratio of the element while resizing
 - `aroundCenter`: Resize around the center of the element
 - `grid`: Snaps the shape to a virtual grid while resizing
 - `degree`: Snaps to an angle when rotating
 
-# Events
+## Events
 
 While resizing, a `resize` event is fired. It contains the following properties (in `event.detail`):
 
@@ -69,7 +77,7 @@ rect.on("resize", (event) => {
 });
 ```
 
-# Contributing
+## Contributing
 
 ```bash
 git clone https://github.com/svgdotjs/svg.resize.js.git
@@ -78,7 +86,7 @@ npm install
 npm run dev
 ```
 
-# Migration from svg.js v2
+## Migration from svg.js v2
 
 - The option naming changed a bit. Please double check
 - The former events were removed. The resize event now serves the same purpose
