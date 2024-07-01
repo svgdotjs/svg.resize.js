@@ -7,10 +7,16 @@
     <link rel="stylesheet" href="@svgdotjs/svg.select.js/dist/svg.select.css" />
   </head>
   <body>
+    <div
+      class="test"
+      style="height: 200vh; overflow: auto; display: flex; flex-direction: column; padding: 20px; margin-left: 10px"
+    >
+      <div id="svgcontent" style="flex-grow: 1; margin-top: 50vh"></div>
+    </div>
     <script type="module" src="src/main.js"></script>
     <script type="module">
       import { SVG, on } from '@svgdotjs/svg.js'
-      const canvas = new SVG().size(1000, 700).addTo('body')
+      const canvas = new SVG().size('100%', '100%').addTo('#svgcontent')
       canvas
         .rect(100, 100)
         .move(100, 100)

@@ -106,7 +106,7 @@ export class ResizeHandler {
   // This is called when a user clicks on one of the resize points
   handleResize(e) {
     this.eventType = e.type
-    const { x: startX, y: startY, event, index, points } = e.detail
+    const { event, index, points } = e.detail
     const isMouse = !event.type.indexOf('mouse')
 
     // Check for left button
@@ -120,7 +120,7 @@ export class ResizeHandler {
     }
 
     this.box = this.el.bbox()
-    this.startPoint = this.el.point(startX, startY)
+    this.startPoint = this.el.point(getCoordsFromEvent(event))
     this.index = index
     this.points = points.slice()
 
@@ -142,8 +142,10 @@ export class ResizeHandler {
     this.lastEvent = e
 
     const endPoint = this.snapToGrid(this.el.point(getCoordsFromEvent(e)))
+
     let dx = endPoint.x - this.startPoint.x
     let dy = endPoint.y - this.startPoint.y
+    console.log('endPoint', endPoint, 'startPoint', this.startPoint, dx, dy)
 
     if (this.preserveAspectRatio && this.aroundCenter) {
       dx *= 2
