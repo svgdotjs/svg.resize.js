@@ -14,7 +14,7 @@
     "name": "Ulrich-Matthias Schäfer"
   },
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
-  "main": "dist/svg.resize.umd.js",
+  "main": "dist/svg.resize.umd.cjs",
   "unpkg": "dist/svg.resize.iife.js",
   "jsdelivr": "dist/svg.resize.iife.js",
   "browser": "dist/svg.resize.js",
@@ -24,7 +24,7 @@
     ".": {
       "types": "./svg.resize.js.d.ts",
       "import": "./dist/svg.resize.js",
-      "require": "./dist/svg.resize.umd.js"
+      "require": "./dist/svg.resize.umd.cjs"
     }
   },
   "files": [
