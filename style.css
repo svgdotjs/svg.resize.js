@@ -1,0 +1,14 @@
+.box > svg > polygon {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+.box {
+  width: 100%;
+  height: 300px;
+  margin: 20px 0 0;
+  border: 1px solid black;
+  background: url(./grid.png) #fff;
+  border-radius: 10px;
+}

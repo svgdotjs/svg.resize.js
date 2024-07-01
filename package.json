@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@svgdotjs/svg.js": "^3.2.4",
+    "@svgdotjs/svg.resize.js": "^2.0.0",
+    "@svgdotjs/svg.select.js": "^4.0.0",
+    "vitepress": "^1.2.3"
+  }
+}
