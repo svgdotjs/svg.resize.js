@@ -58,6 +58,6 @@
   },
   "peerDependencies": {
     "@svgdotjs/svg.js": "^3.2.4",
-    "@svgdotjs/svg.select.js": "^4.0.0"
+    "@svgdotjs/svg.select.js": "^4.0.1"
   }
 }
