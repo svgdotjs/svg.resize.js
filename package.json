@@ -7,8 +7,8 @@
   },
   "devDependencies": {
     "@svgdotjs/svg.js": "^3.2.4",
-    "@svgdotjs/svg.resize.js": "^2.0.1",
-    "@svgdotjs/svg.select.js": "^4.0.0",
+    "@svgdotjs/svg.resize.js": "^2.0.2",
+    "@svgdotjs/svg.select.js": "^4.0.1",
     "vitepress": "^1.2.3"
   }
 }
