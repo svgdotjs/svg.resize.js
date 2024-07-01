@@ -26,4 +26,5 @@ export default defineConfig({
       { icon: "github", link: "https://github.com/@svgdotjs/svg.resize.js" },
     ],
   },
+  base: "/svg.resize.js/",
 });
