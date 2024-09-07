@@ -145,7 +145,6 @@ export class ResizeHandler {
 
     let dx = endPoint.x - this.startPoint.x
     let dy = endPoint.y - this.startPoint.y
-    console.log('endPoint', endPoint, 'startPoint', this.startPoint, dx, dy)
 
     if (this.preserveAspectRatio && this.aroundCenter) {
       dx *= 2
