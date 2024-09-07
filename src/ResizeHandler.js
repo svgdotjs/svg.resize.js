@@ -181,6 +181,8 @@ export class ResizeHandler {
     box.width = box.x2 - box.x
     box.height = box.y2 - box.y
 
+    // console.log(this.box, box)
+
     // after figuring out the resulting box,
     // we have to check if the aspect ratio should be preserved
     // if so, we have to find the correct scaling factor and scale the box around a fixed point (usually the opposite of the handle)
@@ -212,7 +214,9 @@ export class ResizeHandler {
       return
     }
 
-    this.el.move(box.x, box.y).size(box.width, box.height)
+    console.log(box)
+
+    this.el.size(box.width, box.height).move(box.x, box.y)
   }
 
   movePoint(e) {

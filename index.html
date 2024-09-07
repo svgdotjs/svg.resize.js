@@ -44,6 +44,8 @@
         .select()
         .resize()
 
+      canvas.circle(100).fill('green').move(300, 300).select().resize({ preserveAspectRatio: true, aroundCenter: true })
+
       on(document, 'keydown', (e) => {
         if (e.key === 'Shift') {
           polygon.resize({ preserveAspectRatio: true })
