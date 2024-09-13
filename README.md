@@ -17,8 +17,10 @@ npm i @svgdotjs/svg.js @svgdotjs/svg.select.js @svgdotjs/svg.resize.js
 Or get it from a cnd:
 
 ```html
+<link rel="stylesheet" href="https://unpkg.com/@svgdotjs/svg.resize.js@latest/dist/svg.resize.css" />
 <script src="https://unpkg.com/@svgdotjs/svg.js"></script>
-<script src="https://unpkg.com/@svgdotjs/svg.select.js"></script>
+<!-- the select plugin comes bundled with the resize plugin -->
+<!-- <script src="https://unpkg.com/@svgdotjs/svg.select.js"></script> -->
 <script src="https://unpkg.com/@svgdotjs/svg.resize.js"></script>
 ```
 
