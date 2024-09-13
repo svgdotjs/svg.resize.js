@@ -1,3 +1,5 @@
+import { Point } from '@svgdotjs/svg.js'
+import { Matrix } from '@svgdotjs/svg.js'
 import { on, off, Box } from '@svgdotjs/svg.js'
 
 const getCoordsFromEvent = (ev) => {
@@ -55,7 +57,6 @@ export class ResizeHandler {
     this.lastCoordinates = null
     this.eventType = ''
     this.lastEvent = null
-    this.angle = 0
     this.handleResize = this.handleResize.bind(this)
     this.resize = this.resize.bind(this)
     this.endResize = this.endResize.bind(this)
@@ -181,8 +182,6 @@ export class ResizeHandler {
     box.width = box.x2 - box.x
     box.height = box.y2 - box.y
 
-    // console.log(this.box, box)
-
     // after figuring out the resulting box,
     // we have to check if the aspect ratio should be preserved
     // if so, we have to find the correct scaling factor and scale the box around a fixed point (usually the opposite of the handle)
@@ -214,8 +213,6 @@ export class ResizeHandler {
       return
     }
 
-    console.log(box)
-
     this.el.size(box.width, box.height).move(box.x, box.y)
   }
 
@@ -242,27 +239,42 @@ export class ResizeHandler {
 
   rotate(e) {
     this.lastEvent = e
+
+    const startPoint = this.startPoint
     const endPoint = this.el.point(getCoordsFromEvent(e))
-    const cx = this.box.cx
-    const cy = this.box.cy
-    const dx1 = this.startPoint.x - cx
-    const dy1 = this.startPoint.y - cy
+
+    const { cx, cy } = this.box
+
+    const dx1 = startPoint.x - cx
+    const dy1 = startPoint.y - cy
+
     const dx2 = endPoint.x - cx
     const dy2 = endPoint.y - cy
+
     const c = Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2)
+
     if (c === 0) {
       return
     }
     let angle = (Math.acos((dx1 * dx2 + dy1 * dy2) / c) / Math.PI) * 180
-    if (endPoint.x < this.startPoint.x) {
+
+    // catches 0 angle and NaN angle that are zero as well (but numerically instable)
+    if (!angle) return
+
+    if (endPoint.x < startPoint.x) {
       angle = -angle
     }
 
-    this.angle = this.snapToAngle(this.angle + angle)
+    const matrix = new Matrix(this.el)
+    const { x: ox, y: oy } = new Point(cx, cy).transformO(matrix)
+
+    const { rotate } = matrix.decompose()
+    const resultAngle = this.snapToAngle(rotate + angle) - rotate
+
     if (
       this.el.dispatch('resize', {
-        box: this.startBox,
-        angle: this.angle,
+        box: this.box,
+        angle: resultAngle,
         eventType: this.eventType,
         event: e,
         handler: this,
@@ -271,7 +283,7 @@ export class ResizeHandler {
       return
     }
 
-    this.el.transform({ rotate: this.angle })
+    this.el.transform(matrix.rotateO(resultAngle, ox, oy))
   }
 
   endResize(ev) {

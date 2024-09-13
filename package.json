@@ -1,6 +1,6 @@
 {
   "name": "@svgdotjs/svg.resize.js",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "An extension for svg.js which allows to resize elements which are selected",
   "type": "module",
   "keywords": [
@@ -17,14 +17,22 @@
   "main": "dist/svg.resize.umd.cjs",
   "unpkg": "dist/svg.resize.iife.js",
   "jsdelivr": "dist/svg.resize.iife.js",
-  "browser": "dist/svg.resize.js",
   "module": "dist/svg.resize.js",
   "typings": "./svg.resize.js.d.ts",
   "exports": {
     ".": {
-      "types": "./svg.resize.js.d.ts",
-      "import": "./dist/svg.resize.js",
-      "require": "./dist/svg.resize.umd.cjs"
+      "import": {
+        "types": "./svg.resize.js.d.ts",
+        "default": "./dist/svg.resize.js"
+      },
+      "require": {
+        "types": "./svg.resize.js.d.cts",
+        "default": "./dist/svg.resize.umd.cjs"
+      },
+      "browser": {
+        "types": "./svg.resize.js.d.ts",
+        "default": "./dist/svg.resize.js"
+      }
     }
   },
   "files": [
@@ -41,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/svgdotjs/svg.resize.js.git"
+    "url": "git+https://github.com/svgdotjs/svg.resize.js.git"
   },
   "engines": {
     "node": ">= 14.18"
