@@ -1,4 +1,4 @@
-import { ResizeHandler } from './src/ResizeHandler.js'
+import { ResizeHandler } from './src/svg.resize.js'
 
 interface ResizeOptions {
   preserveAspectRatio: boolean
@@ -17,3 +17,5 @@ declare module '@svgdotjs/svg.js' {
     resize(attr?: ResizeHandler | ResizeOptions | boolean): this
   }
 }
+
+export { ResizeHandler }
