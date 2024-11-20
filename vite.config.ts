@@ -27,7 +27,7 @@ export default defineConfig({
       formats: ['iife', 'es', 'umd'],
     },
     rollupOptions: {
-      external: ['@svgdotjs/svg.js'],
+      external: ['@svgdotjs/svg.js', '@svgdotjs/svg.select.js'],
       output: {
         globals: {
           '@svgdotjs/svg.js': 'SVG',
