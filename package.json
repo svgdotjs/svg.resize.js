@@ -38,7 +38,8 @@
   "files": [
     "/dist",
     "/src",
-    "/svg.resize.js.d.ts"
+    "/svg.resize.js.d.ts",
+    "/svg.resize.js.d.cts"
   ],
   "scripts": {
     "dev": "vite",
