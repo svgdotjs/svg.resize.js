@@ -187,8 +187,11 @@ export class ResizeHandler {
     // if so, we have to find the correct scaling factor and scale the box around a fixed point (usually the opposite of the handle)
     // in case aroundCenter is active, the fixed point is the center of the box
     if (this.preserveAspectRatio) {
-      const scaleX = box.width / this.box.width
-      const scaleY = box.height / this.box.height
+      // Zero-size boxes (e.g. charts being disposed) would yield NaN/Infinity.
+      // Fall back to 1 per axis so the resize degrades to a no-op instead of
+      // propagating NaN/Infinity into the box
+      const scaleX = this.box.width ? box.width / this.box.width : 1
+      const scaleY = this.box.height ? box.height / this.box.height : 1
 
       const order = ['lt', 't', 'rt', 'r', 'rb', 'b', 'lb', 'l']
 
@@ -197,6 +200,11 @@ export class ResizeHandler {
 
       let scale = this.eventType.includes('t') || this.eventType.includes('b') ? scaleY : scaleX
       scale = this.eventType.length === 2 ? Math.max(scaleX, scaleY) : scale
+
+      // Backstop for any other non-finite scale (e.g. NaN numerator)
+      if (!Number.isFinite(scale)) {
+        scale = 1
+      }
 
       box = scaleBox(this.box, constantPoint, scale)
     }
