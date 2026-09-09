@@ -74,6 +74,39 @@ rect.on('resize', (event) => {
 })
 ```
 
+# Limiting resize / constraints
+
+The old `constraint` option was removed in v3. To enforce minimum/maximum
+sizes or keep elements inside a boundary, listen for the `resize` event and
+call `preventDefault()` to reject the pending resize. The event is dispatched
+with the proposed `box` before it is applied (see `src/ResizeHandler.js:204-214`),
+so preventing the default leaves the element at its current size.
+
+Max size:
+
+```ts
+rect.on('resize', (e) => {
+  if (e.detail.box.width > 300) e.preventDefault()
+})
+```
+
+Min size:
+
+```ts
+rect.on('resize', (e) => {
+  if (e.detail.box.width < 50 || e.detail.box.height < 50) e.preventDefault()
+})
+```
+
+Keep inside a boundary (e.g. a 500x500 canvas):
+
+```ts
+rect.on('resize', (e) => {
+  const box = e.detail.box
+  if (box.x < 0 || box.y < 0 || box.x2 > 500 || box.y2 > 500) e.preventDefault()
+})
+```
+
 # Contributing
 
 ```bash
