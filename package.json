@@ -3,6 +3,32 @@
   "version": "2.0.5",
   "description": "An extension for svg.js which allows to resize elements which are selected",
   "type": "module",
+  "packageManager": "pnpm@11.26.0",
+  "main": "dist/svg.resize.js",
+  "module": "dist/svg.resize.mjs",
+  "exports": {
+    ".": {
+      "browser": {
+        "types": "./dist/svg.resize.d.mts",
+        "default": "./dist/svg.resize.mjs"
+      },
+      "import": {
+        "types": "./dist/svg.resize.d.mts",
+        "default": "./dist/svg.resize.mjs"
+      },
+      "require": {
+        "types": "./dist/svg.resize.d.ts",
+        "default": "./dist/svg.resize.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "unpkg": "dist/svg.resize.js",
+  "jsdelivr": "dist/svg.resize.js",
+  "files": [
+    "/dist",
+    "!/dist/*.zip"
+  ],
   "keywords": [
     "svg.js",
     "resize",
@@ -10,62 +36,34 @@
   ],
   "bugs": "https://github.com/svgdotjs/svg.resize.js/issues",
   "license": "MIT",
+  "typings": "./dist/svg.resize.d.ts",
   "author": {
     "name": "Ulrich-Matthias Schäfer"
   },
   "homepage": "https://github.com/svgdotjs/svg.resize.js",
-  "main": "dist/svg.resize.umd.cjs",
-  "unpkg": "dist/svg.resize.iife.js",
-  "jsdelivr": "dist/svg.resize.iife.js",
-  "module": "dist/svg.resize.js",
-  "typings": "./svg.resize.js.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./svg.resize.js.d.ts",
-        "default": "./dist/svg.resize.js"
-      },
-      "require": {
-        "types": "./svg.resize.js.d.cts",
-        "default": "./dist/svg.resize.umd.cjs"
-      },
-      "browser": {
-        "types": "./svg.resize.js.d.ts",
-        "default": "./dist/svg.resize.js"
-      }
-    }
-  },
-  "files": [
-    "/dist",
-    "/src",
-    "/svg.resize.js.d.ts",
-    "/svg.resize.js.d.cts"
-  ],
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && prettier --write . && eslint ./src && vite build",
-    "zip": "zip -j dist/svg.resize.js.zip -- LICENSE README.md dist/svg.resize.iife.js  dist/svg.resize.iife.js.map  dist/svg.resize.js  dist/svg.resize.js.map  dist/svg.resize.umd.cjs  dist/svg.resize.umd.cjs.map",
-    "prepublishOnly": "rm -rf ./dist && npm run build",
-    "postpublish": "npm run zip"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/svgdotjs/svg.resize.js.git"
   },
-  "engines": {
-    "node": ">= 14.18"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.10",
-    "eslint": "^9.7.0",
-    "eslint-plugin-import-x": "^3.0.1",
-    "prettier": "^3.3.3",
-    "terser": "^5.31.2",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.4"
+  "scripts": {
+    "build": "pnpm fix && tsc && vite build",
+    "demo": "vite demo",
+    "demo:build": "vite build demo --outDir ../demo-dist --emptyOutDir",
+    "fix": "oxfmt --write . && oxlint -D correctness --fix .",
+    "lint": "oxfmt --check . && oxlint -D correctness .",
+    "prepublishOnly": "rm -rf ./dist && pnpm build && pnpm zip",
+    "zip": "zip -j dist/svg.resize.js.zip -- LICENSE README.md dist/svg.resize.js"
   },
   "peerDependencies": {
-    "@svgdotjs/svg.js": "^3.2.4",
+    "@svgdotjs/svg.js": "^3.1.0",
     "@svgdotjs/svg.select.js": "^4.0.1"
+  },
+  "devDependencies": {
+    "@svgdotjs/svg.js": "^3.2.8",
+    "@svgdotjs/svg.select.js": "^4.0.3",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
   }
 }

@@ -4,7 +4,8 @@ An extension of [svg.js](https://github.com/svgdotjs/svg.js) which allows to res
 
 # Demo
 
-For a demo see http://svgdotjs.github.io/svg.resize.js/
+For a demo see http://svgdotjs.github.io/svg.resize.js/ or run `pnpm demo`,
+which starts a vite dev server with the demo from `demo/`.
 
 # Get Started
 
@@ -17,7 +18,10 @@ npm i @svgdotjs/svg.js @svgdotjs/svg.select.js @svgdotjs/svg.resize.js
 Or get it from a cnd:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@svgdotjs/svg.resize.js@latest/dist/svg.resize.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@svgdotjs/svg.select.js@latest/dist/svg.select.css"
+/>
 <script src="https://unpkg.com/@svgdotjs/svg.js"></script>
 <!-- the select plugin comes bundled with the resize plugin -->
 <!-- <script src="https://unpkg.com/@svgdotjs/svg.select.js"></script> -->
@@ -48,7 +52,12 @@ rect.resize(false)
 Preserve aspect ratio, resize around center and snap to grid:
 
 ```ts
-rect.resize({ preserveAspectRatio: true, aroundCenter: true, grid: 10, degree: 0.1 })
+rect.resize({
+  preserveAspectRatio: true,
+  aroundCenter: true,
+  grid: 10,
+  degree: 0.1
+})
 ```
 
 # Options
