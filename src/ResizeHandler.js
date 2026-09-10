@@ -31,7 +31,7 @@ function scaleBox(box, origin, scale) {
     [box.x, box.y],
     [box.x + box.width, box.y],
     [box.x + box.width, box.y + box.height],
-    [box.x, box.y + box.height],
+    [box.x, box.y + box.height]
   ]
 
   const newPoints = points.map(([x, y]) => {
@@ -86,7 +86,7 @@ export class ResizeHandler {
         'b.resize',
         'l.resize',
         'rot.resize',
-        'point.resize',
+        'point.resize'
       ],
       this.handleResize
     )
@@ -116,7 +116,10 @@ export class ResizeHandler {
     }
 
     // Fire beforedrag event
-    if (this.el.dispatch('beforeresize', { event: e, handler: this }).defaultPrevented) {
+    if (
+      this.el.dispatch('beforeresize', { event: e, handler: this })
+        .defaultPrevented
+    ) {
       return
     }
 
@@ -127,7 +130,8 @@ export class ResizeHandler {
 
     // We consider the resize done, when a touch is canceled, too
     const eventMove = (isMouse ? 'mousemove' : 'touchmove') + '.resize'
-    const eventEnd = (isMouse ? 'mouseup' : 'touchcancel.resize touchend') + '.resize'
+    const eventEnd =
+      (isMouse ? 'mouseup' : 'touchcancel.resize touchend') + '.resize'
 
     if (e.type === 'point') {
       on(window, eventMove, this.movePoint)
@@ -196,9 +200,14 @@ export class ResizeHandler {
       const order = ['lt', 't', 'rt', 'r', 'rb', 'b', 'lb', 'l']
 
       const origin = (order.indexOf(this.eventType) + 4) % order.length
-      const constantPoint = this.aroundCenter ? [this.box.cx, this.box.cy] : this.points[origin]
+      const constantPoint = this.aroundCenter
+        ? [this.box.cx, this.box.cy]
+        : this.points[origin]
 
-      let scale = this.eventType.includes('t') || this.eventType.includes('b') ? scaleY : scaleX
+      let scale =
+        this.eventType.includes('t') || this.eventType.includes('b')
+          ? scaleY
+          : scaleX
       scale = this.eventType.length === 2 ? Math.max(scaleX, scaleY) : scale
 
       // Backstop for any other non-finite scale (e.g. NaN numerator)
@@ -215,7 +224,7 @@ export class ResizeHandler {
         angle: 0,
         eventType: this.eventType,
         event: e,
-        handler: this,
+        handler: this
       }).defaultPrevented
     ) {
       return
@@ -236,7 +245,7 @@ export class ResizeHandler {
         angle: 0,
         eventType: this.eventType,
         event: e,
-        handler: this,
+        handler: this
       }).defaultPrevented
     ) {
       return
@@ -259,7 +268,8 @@ export class ResizeHandler {
     const dx2 = endPoint.x - cx
     const dy2 = endPoint.y - cy
 
-    const c = Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2)
+    const c =
+      Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2)
 
     if (c === 0) {
       return
@@ -285,7 +295,7 @@ export class ResizeHandler {
         angle: resultAngle,
         eventType: this.eventType,
         event: e,
-        handler: this,
+        handler: this
       }).defaultPrevented
     ) {
       return

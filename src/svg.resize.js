@@ -26,7 +26,7 @@ extend(Element, {
     resizeHandler.active(enabled, options)
 
     return this
-  },
+  }
 })
 
 export { ResizeHandler }
