@@ -61,8 +61,13 @@ export default defineConfig({
         {
           format: 'umd',
           name: 'SVG',
+          // Attach handler exports without replacing the core SVG global.
+          extend: true,
           entryFileNames: 'svg.resize.js',
-          globals: { '@svgdotjs/svg.js': 'SVG' },
+          globals: {
+            '@svgdotjs/svg.js': 'SVG',
+            '@svgdotjs/svg.select.js': 'SVG'
+          },
           banner: headerLong,
           minify: true,
           // without this the minifier drops the banner

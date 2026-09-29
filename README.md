@@ -23,8 +23,7 @@ Or get it from a cnd:
   href="https://unpkg.com/@svgdotjs/svg.select.js@latest/dist/svg.select.css"
 />
 <script src="https://unpkg.com/@svgdotjs/svg.js"></script>
-<!-- the select plugin comes bundled with the resize plugin -->
-<!-- <script src="https://unpkg.com/@svgdotjs/svg.select.js"></script> -->
+<script src="https://unpkg.com/@svgdotjs/svg.select.js"></script>
 <script src="https://unpkg.com/@svgdotjs/svg.resize.js"></script>
 ```
 
